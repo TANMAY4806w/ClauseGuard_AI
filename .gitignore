@@ -55,6 +55,10 @@ data/raw_uploads/
 data/processed/
 *.log
 
+# Agent Context & Local Memory (kept local, not pushed)
+agent/
+
+
 # IDE and OS files
 .vscode/
 .idea/

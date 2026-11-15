@@ -2,8 +2,8 @@
 
 > **Update Protocol:** This checklist is inspected and synced whenever milestone updates are provided to the user.
 
-*Last Synchronized:* 2026-11-16T00:56:00+05:30  
-*Current Phase:* **Phase 3: Model Context Protocol (MCP) Server & LangGraph Agent**
+*Last Synchronized:* 2026-11-16T01:10:00+05:30  
+*Current Phase:* **Phase 4: FastAPI REST API & Redis Acceleration**
 
 ---
 
@@ -29,14 +29,14 @@
 ---
 
 ### Phase 3: Model Context Protocol (MCP) Server & LangGraph Agent
-- [ ] **Task 3.1:** Implement `src/agent/mcp_server.py` with the 4 core tools:
+- [x] **Task 3.1:** Implement `src/agent/mcp_server.py` with the 4 core tools:
   - `query_contract_vector_store`
   - `audit_predatory_terms` (15+ codified rule patterns)
   - `verify_source_citation` (Levenshtein verification $\ge 0.95$)
   - `synthesize_plain_english_advice`
-- [ ] **Task 3.2:** Define LangGraph state in `src/agent/state.py` (`ClauseGuardState`).
-- [ ] **Task 3.3:** Build graph nodes and edges in `src/agent/graph.py` (Plan $\rightarrow$ Retrieve $\rightarrow$ Audit $\rightarrow$ Reflection $\rightarrow$ Finalize).
-- [ ] **Gate 3:** Write `tests/test_agent.py`. Verify agent detects an auto-renewal trap with verifiable citations.
+- [x] **Task 3.2:** Define LangGraph state in `src/agent/state.py` (`ClauseGuardState`).
+- [x] **Task 3.3:** Build graph nodes and edges in `src/agent/graph.py` (Plan $\rightarrow$ Retrieve $\rightarrow$ Audit $\rightarrow$ Reflection $\rightarrow$ Finalize).
+- [x] **Gate 3:** Write `tests/test_agent.py`. Verify agent detects an auto-renewal trap with verifiable citations (5/5 tests passed; 17/17 total).
 
 ---
 

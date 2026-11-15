@@ -50,3 +50,12 @@
 ### Q7: "Why is structured JSON logging essential in microservices?"
 - **The Failure Mode:** Human-readable plaintext logs (`[INFO] 2026-11-16: User uploaded file`) are notoriously difficult to parse, search, and aggregate across distributed cloud systems (Datadog, AWS CloudWatch, ELK).
 - **Our Engineering Choice:** We implemented a custom `JSONFormatter` that serializes log records into single-line JSON with standardized schema keys (`timestamp`, `level`, `logger`, `message`, `module`, `func_name`, `line_no`, and structured `context`). This enables immediate, indexed filtering by `doc_id` or `event_type` in log analytics dashboards.
+
+### Q8: "How does your regex semantic hierarchy chunking differ from standard chunking?"
+- **The Failure Mode:** Standard splitters (`RecursiveCharacterTextSplitter(chunk_size=1000)`) slice purely on character counts. If an auto-renewal section starts at char 900, the critical 90-day notice condition gets split across two chunks. Vector search only retrieves one half, causing the LLM to miss the renewal trap entirely.
+- **Our Engineering Choice:** In `src/ingestion/chunker.py`, we engineered regex anchors identifying `Article`, `Section`, decimal numbering (`14.2(b)`), and capitalized bold titles. Each chunk is a complete, self-contained legal unit retaining its physical PDF `page_number`, `section_number`, and legal `category`.
+
+### Q9: "What is the difference between Bi-Encoders and Cross-Encoders, and why use both?"
+- **Bi-Encoder (Embedding Model):** Encodes the query and document chunks independently into dense vectors (`bge-small-en-v1.5`), allowing fast cosine similarity search across millions of vectors in Qdrant ($O(1)$ lookup via HNSW graphs). However, bi-encoders miss complex token interactions between query and text.
+- **Cross-Encoder (Reranker):** Takes `(query, document)` together into a single transformer (`ms-marco-TinyBERT-L-2-v2` via `FlashRank`) allowing full cross-attention across all tokens. It is dramatically more accurate than bi-encoders but too computationally expensive to run on an entire database.
+- **Our Hybrid Two-Stage Pipeline:** Stage 1 uses FastEmbed + Qdrant to retrieve 25 candidate chunks in $<10\text{ ms}$. Stage 2 uses FlashRank cross-encoder on CPU to rerank and prune to the top 5 chunks in $<18\text{ ms}$, achieving maximum precision with minimum latency.

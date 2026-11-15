@@ -2,8 +2,8 @@
 
 > **Update Protocol:** This checklist is inspected and synced whenever milestone updates are provided to the user.
 
-*Last Synchronized:* 2026-11-16T00:06:00+05:30  
-*Current Phase:* **Phase 2: Ingestion Pipeline & Hybrid Vector Store**
+*Last Synchronized:* 2026-11-16T00:56:00+05:30  
+*Current Phase:* **Phase 3: Model Context Protocol (MCP) Server & LangGraph Agent**
 
 ---
 
@@ -20,11 +20,11 @@
 ---
 
 ### Phase 2: Ingestion Pipeline & Hybrid Vector Store
-- [ ] **Task 2.1:** Implement `src/ingestion/pdf_parser.py` (PyMuPDF / `fitz` for page text & coordinate extraction).
-- [ ] **Task 2.2:** Implement `src/ingestion/chunker.py` (Regex semantic hierarchy chunking preserving legal sections).
-- [ ] **Task 2.3:** Implement `src/vectorstore/qdrant_client.py` (Qdrant client supporting embedded local storage & hybrid search).
-- [ ] **Task 2.4:** Implement `src/vectorstore/reranker.py` (FlashRank cross-encoder `ms-marco-TinyBERT-L-2-v2`).
-- [ ] **Gate 2:** Write `tests/test_ingestion.py`. Ingest sample PDF, verify chunks retain section titles, page numbers, and query via hybrid search.
+- [x] **Task 2.1:** Implement `src/ingestion/pdf_parser.py` (PyMuPDF / `fitz` for page text & coordinate extraction).
+- [x] **Task 2.2:** Implement `src/ingestion/chunker.py` (Regex semantic hierarchy chunking preserving legal sections).
+- [x] **Task 2.3:** Implement `src/vectorstore/qdrant_client.py` (Qdrant client supporting embedded local storage & hybrid search).
+- [x] **Task 2.4:** Implement `src/vectorstore/reranker.py` (FlashRank cross-encoder `ms-marco-TinyBERT-L-2-v2`).
+- [x] **Gate 2:** Write `tests/test_ingestion.py`. Ingest sample PDF, verify chunks retain section titles, page numbers, and query via hybrid search (5/5 tests passed; 12/12 total).
 
 ---
 

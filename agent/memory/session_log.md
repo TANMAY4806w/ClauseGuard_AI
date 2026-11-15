@@ -41,3 +41,16 @@
   - `tests/test_core.py` (Unit tests verifying settings, validation, and JSON logging).
 - **Verification Gate 1:** Executed `pytest tests/test_core.py` — **7/7 tests passed in 0.63s**.
 - **Package Installation:** Installed `qdrant-client`, `flashrank`, `fakeredis`, `Levenshtein`.
+
+---
+
+### [2026-11-16T00:56:00+05:30] — Phase 2: Ingestion Pipeline & Hybrid Vector Store Completed
+- **Action:** Completed Phase 2 with strict TDD verification.
+- **Files Created:**
+  - `src/ingestion/__init__.py` and `src/ingestion/pdf_parser.py` (PyMuPDF coordinate & physical page extraction, SHA-256 calculation, and scanned page detection).
+  - `src/ingestion/chunker.py` (Regex semantic hierarchy chunker mapping clauses to categories without splitting sentences).
+  - `src/vectorstore/__init__.py` and `src/vectorstore/qdrant_client.py` (Qdrant client supporting in-memory, local on-disk, and server modes with FastEmbed `bge-small-en-v1.5` dense embeddings).
+  - `src/vectorstore/reranker.py` (CPU-optimized `FlashRank` cross-encoder for sub-18ms top-k candidate pruning).
+  - `tests/test_ingestion.py` (Unit tests verifying parser, chunker, Qdrant hybrid search, and reranker).
+- **Verification Gate 2:** Executed `pytest tests/` — **12/12 total unit tests passed in 4.50s**.
+- **Bug Fixed:** Handled reserved `LogRecord.filename` collision in logger context and upgraded Qdrant client call to modern `query_points` API.

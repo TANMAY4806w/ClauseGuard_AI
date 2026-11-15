@@ -12,7 +12,9 @@ PyMuPDF>=1.23.0
 
 # Vector Store & Search
 qdrant-client>=1.8.0
+fastembed>=0.2.0
 flashrank>=0.2.0
+
 
 # Agentic Orchestration & LLM
 langgraph>=0.0.26

@@ -42,3 +42,11 @@
 - **$<15\text{ ms}$ Cached Query Latency** using SHA-256 document hashing and Redis caching.
 - **$70\%$ Token Reduction & $<18\text{ ms}$ Rerank Overhead** via FlashRank cross-encoders.
 - **$\ge 90\%$ Faithfulness Score** verified using Ragas automated benchmarking.
+
+### Q6: "Why did you use Pydantic-Settings instead of standard `os.getenv` or `python-dotenv`?"
+- **The Failure Mode:** `os.getenv` provides zero type validation or existence guarantees. If a deployment has `MAX_UPLOAD_SIZE_MB="twenty-five"` or is missing a required variable, the service starts silently and crashes hours later in production during user traffic.
+- **Our Engineering Choice:** `pydantic-settings` validates environment variables strictly at application boot (Fail-Fast). It coerces types, enforces custom bounds (e.g. `1 <= upload_size <= 100 MB`), and caches the resulting immutable `Settings` object via `@lru_cache` to eliminate repeated environment parsing.
+
+### Q7: "Why is structured JSON logging essential in microservices?"
+- **The Failure Mode:** Human-readable plaintext logs (`[INFO] 2026-11-16: User uploaded file`) are notoriously difficult to parse, search, and aggregate across distributed cloud systems (Datadog, AWS CloudWatch, ELK).
+- **Our Engineering Choice:** We implemented a custom `JSONFormatter` that serializes log records into single-line JSON with standardized schema keys (`timestamp`, `level`, `logger`, `message`, `module`, `func_name`, `line_no`, and structured `context`). This enables immediate, indexed filtering by `doc_id` or `event_type` in log analytics dashboards.

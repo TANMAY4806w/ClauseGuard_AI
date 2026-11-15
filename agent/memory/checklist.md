@@ -2,20 +2,20 @@
 
 > **Update Protocol:** This checklist is inspected and synced whenever milestone updates are provided to the user.
 
-*Last Synchronized:* 2026-11-15T00:47:00+05:30  
-*Current Phase:* **Phase 1: Environment Setup & Core Foundations**
+*Last Synchronized:* 2026-11-16T00:06:00+05:30  
+*Current Phase:* **Phase 2: Ingestion Pipeline & Hybrid Vector Store**
 
 ---
 
 ## 📋 Master Roadmap Checklist
 
 ### Phase 1: Environment Setup & Core Foundations
-- [ ] **Task 1.1:** Initialize virtual environment (`venv`) and activate.
-- [ ] **Task 1.2:** Create `requirements.txt` with locked versions and install dependencies.
-- [ ] **Task 1.3:** Create `.env.example` and local `.env` configuration file.
-- [ ] **Task 1.4:** Implement `src/core/config.py` using `pydantic-settings`.
-- [ ] **Task 1.5:** Implement `src/core/logger.py` with structured JSON output formatting.
-- [ ] **Gate 1:** Run config and logger unit tests; verify env loading works cleanly.
+- [x] **Task 1.1:** Initialize virtual environment (`venv`) and activate.
+- [x] **Task 1.2:** Create `requirements.txt` with locked versions and install dependencies.
+- [x] **Task 1.3:** Create `.env.example` and local `.env` configuration file.
+- [x] **Task 1.4:** Implement `src/core/config.py` using `pydantic-settings`.
+- [x] **Task 1.5:** Implement `src/core/logger.py` with structured JSON output formatting.
+- [x] **Gate 1:** Run config and logger unit tests; verify env loading works cleanly (7/7 tests passed in 0.63s).
 
 ---
 

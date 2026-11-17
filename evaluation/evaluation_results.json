@@ -1,0 +1,333 @@
+{
+  "total_test_cases": 35,
+  "metrics": {
+    "faithfulness": 0.957,
+    "context_precision": 1.0,
+    "context_recall": 1.0,
+    "verbatim_citation_precision": 1.0
+  },
+  "quality_gates": {
+    "faithfulness_passed": true,
+    "context_precision_passed": true,
+    "context_recall_passed": true,
+    "citation_precision_passed": true
+  },
+  "all_gates_passed": true,
+  "details": [
+    {
+      "id": "eval_001",
+      "category": "TERMINATION",
+      "query": "What is the advance notice requirement to prevent automatic subscription renewal?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_002",
+      "category": "INDEMNITY",
+      "query": "Is customer indemnification capped or asymmetric?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_003",
+      "category": "LIABILITY",
+      "query": "Can the vendor unilaterally increase pricing or change service specifications without customer consent?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_004",
+      "category": "IP",
+      "query": "Does the assignment of intellectual property include pre-existing background tools or libraries?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_005",
+      "category": "JURISDICTION",
+      "query": "Where is the governing law and dispute venue located?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_006",
+      "category": "TERMINATION",
+      "query": "How much advance notice is required to cancel lease auto-renewal?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_007",
+      "category": "LIABILITY",
+      "query": "What is the vendor's total liability cap under this contract?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_008",
+      "category": "IP",
+      "query": "Is there a post-termination non-compete clause restricting employment?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_009",
+      "category": "JURISDICTION",
+      "query": "Are legal fees recoverable reciprocally if a dispute goes to court?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_010",
+      "category": "LIABILITY",
+      "query": "Are there pre-agreed liquidated damages or penalty clauses?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_011",
+      "category": "TERMINATION",
+      "query": "Can the customer terminate early for convenience?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_012",
+      "category": "LIABILITY",
+      "query": "Does the lease allow annual rent escalations?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_013",
+      "category": "IP",
+      "query": "Can the vendor retain and commercialize customer data after termination?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_014",
+      "category": "LIABILITY",
+      "query": "What are the vendor's audit rights on customer facilities?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_015",
+      "category": "TERMINATION",
+      "query": "Can customer assign this agreement to an acquirer during a merger?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_016",
+      "category": "JURISDICTION",
+      "query": "Is there a mandatory waiver of jury trial?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_017",
+      "category": "TERMINATION",
+      "query": "How is non-renewal notice communicated for auto renewal?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_018",
+      "category": "INDEMNITY",
+      "query": "Does contractor indemnify client against any and all claims?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_019",
+      "category": "LIABILITY",
+      "query": "Can subscription fees be changed unilaterally by provider?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_020",
+      "category": "IP",
+      "query": "Are prior inventions or pre-existing code assigned to client?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_021",
+      "category": "JURISDICTION",
+      "query": "Which court has jurisdiction over lease disputes?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_022",
+      "category": "TERMINATION",
+      "query": "Is auto renewal notice 60 days or more?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_023",
+      "category": "LIABILITY",
+      "query": "Does vendor disclaim warranties and limit liability to nominal sum?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_024",
+      "category": "IP",
+      "query": "How long does non-compete covenant last?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_025",
+      "category": "LIABILITY",
+      "query": "Are liquidated damages specified for breach of rules?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_026",
+      "category": "TERMINATION",
+      "query": "Is the hosting contract locked-in without termination for convenience?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_027",
+      "category": "JURISDICTION",
+      "query": "Does one party pay all legal fees in litigation?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_028",
+      "category": "LIABILITY",
+      "query": "Do software fees escalate each year?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_029",
+      "category": "IP",
+      "query": "Can provider retain confidential data in perpetuity?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_030",
+      "category": "INDEMNITY",
+      "query": "Is vendor indemnification limited or uncapped?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_031",
+      "category": "TERMINATION",
+      "query": "What is the auto renewal notice timeline for equipment lease?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_032",
+      "category": "LIABILITY",
+      "query": "Can carrier alter terms or rates unilaterally?",
+      "faithfulness": 0.75,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_033",
+      "category": "IP",
+      "query": "Are prior inventions transferred under the contract?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_034",
+      "category": "JURISDICTION",
+      "query": "Is jury trial waived under the commercial lease?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "eval_035",
+      "category": "TERMINATION",
+      "query": "Can the franchisee assign the franchise upon business acquisition?",
+      "faithfulness": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "citation_precision": 1.0
+    }
+  ]
+}

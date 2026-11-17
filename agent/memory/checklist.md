@@ -2,8 +2,8 @@
 
 > **Update Protocol:** This checklist is inspected and synced whenever milestone updates are provided to the user.
 
-*Last Synchronized:* 2026-11-17T16:45:00+05:30  
-*Current Phase:* **Phase 5: Ragas Evaluation & Golden Dataset Benchmarking**
+*Last Synchronized:* 2026-11-17T19:37:00+05:30  
+*Current Phase:* **Phase 6: Multi-Container Docker Deployment & CI/CD**
 
 ---
 
@@ -54,27 +54,14 @@
 ---
 
 ### Phase 5: Ragas Evaluation & Golden Dataset Benchmarking
-- [ ] **Task 5.1:** Populate `data/golden_eval_dataset/golden_contracts.json` with 30+ labeled ground-truth clauses.
-- [ ] **Task 4.2:** Implement Redis caching & state service in `src/services/cache.py`.
-- [ ] **Task 4.3:** Implement asynchronous endpoints in `src/api/routes.py`:
-  - `POST /api/v1/auth/token`
-  - `POST /api/v1/contracts/upload`
-  - `GET /api/v1/contracts/{doc_id}/status`
-  - `GET /api/v1/contracts/{doc_id}/analysis`
-- [ ] **Task 4.4:** Build application entry point in `src/main.py`.
-- [ ] **Gate 4:** Launch Uvicorn; test upload and polling via Swagger UI at `/docs`.
-
----
-
-### Phase 5: Ragas Evaluation & Golden Dataset Benchmarking
-- [ ] **Task 5.1:** Populate `data/golden_eval_dataset/golden_contracts.json` with 30+ labeled ground-truth clauses.
-- [ ] **Task 5.2:** Implement `evaluation/run_ragas_eval.py` benchmarking script.
-- [ ] **Task 5.3:** Execute benchmark and assert quality thresholds:
-  - Faithfulness $\ge 0.90$
-  - Context Precision $\ge 0.88$
-  - Context Recall $\ge 0.85$
-  - Verbatim Citation Precision = $100\%$
-- [ ] **Gate 5:** Export evaluation metrics and update `README.md`.
+- [x] **Task 5.1:** Populate `data/golden_eval_dataset/golden_contracts.json` with 35 labeled ground-truth clauses.
+- [x] **Task 5.2:** Implement `evaluation/run_ragas_eval.py` benchmarking script.
+- [x] **Task 5.3:** Execute benchmark and assert quality thresholds:
+  - Faithfulness = 0.957 ($\ge 0.900$) ✅
+  - Context Precision = 1.000 ($\ge 0.880$) ✅
+  - Context Recall = 1.000 ($\ge 0.850$) ✅
+  - Verbatim Citation Precision = 100.0% ($100\%$) ✅
+- [x] **Gate 5:** Export evaluation metrics and update `README.md` (2/2 evaluation tests passed; 24/24 total).
 
 ---
 

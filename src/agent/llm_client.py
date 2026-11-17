@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.request
 import urllib.error
 from typing import Any, Dict, List, Optional
@@ -220,21 +221,37 @@ Do not enclose in markdown code blocks if possible.
             }
 
         try:
-            # Clean possible markdown fences
-            cleaned = raw_response.strip()
+            # Clean possible markdown fences and normalize unicode spaces
+            cleaned = (
+                raw_response.strip()
+                .replace("\u202f", " ")
+                .replace("\u00a0", " ")
+                .replace("’", "'")
+                .replace("”", '"')
+                .replace("“", '"')
+            )
             if cleaned.startswith("```json"):
                 cleaned = cleaned[7:]
             if cleaned.startswith("```"):
                 cleaned = cleaned[3:]
             if cleaned.endswith("```"):
                 cleaned = cleaned[:-3]
-            data = json.loads(cleaned.strip())
+            cleaned = cleaned.strip()
+
+            # Attempt JSON load
+            data = json.loads(cleaned)
             return {
                 "statutory_compliance_note": data.get("statutory_compliance_note", ""),
                 "negotiation_advice": data.get("negotiation_advice", counter_term),
             }
         except Exception:
+            # Fallback regex extraction in case of partial JSON formatting
+            note_match = re.search(r'"statutory_compliance_note":\s*"([^"]+)"', cleaned, re.DOTALL)
+            advice_match = re.search(r'"negotiation_advice":\s*"([^"]+)"', cleaned, re.DOTALL)
+
+            note_val = note_match.group(1).strip() if note_match else cleaned
+            advice_val = advice_match.group(1).strip() if advice_match else counter_term
             return {
-                "statutory_compliance_note": raw_response[:250],
-                "negotiation_advice": counter_term,
+                "statutory_compliance_note": note_val,
+                "negotiation_advice": advice_val,
             }

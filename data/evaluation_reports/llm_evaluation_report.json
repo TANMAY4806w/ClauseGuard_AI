@@ -1,0 +1,59 @@
+{
+  "evaluation_timestamp": "2026-11-17T17:41:54Z",
+  "metrics": {
+    "statutory_alignment_score": 0.945,
+    "schema_conformance_rate": 1.0,
+    "average_latency_ms": 2554.73,
+    "circuit_breaker_groq_to_gemini": true,
+    "blackout_deterministic_fallback": true
+  },
+  "quality_gates": {
+    "statutory_alignment_gte_0_75": true,
+    "schema_conformance_is_100_percent": true,
+    "fallback_resilience_verified": true
+  },
+  "all_gates_passed": true,
+  "test_cases_evaluated": 5,
+  "detailed_results": [
+    {
+      "category": "TERMINATION",
+      "headline": "Strict 90-Day Auto-Renewal Trap",
+      "latency_ms": 2921.56,
+      "statutory_note": "While not strictly void under Section 23, the 90-day notice requirement creates a significant imbalance in bargaining power that may be challenged as unconscionable or contrary to public policy under Section 23 of the Indian Contract Act, 1872, particularly if it effectively prevents the customer from exiting due to a minor administrative oversight. Furthermore, if the auto-renewal is triggered by a technicality rather than mutual assent, it risks violating the requirement of free consent under Section 10, as the customer is coerced into a new term without a genuine opportunity to negotiate or exit.",
+      "negotiation_advice": "Reject the 90-day notice period and propose a mutual 30-day termination right for convenience, or alternatively, limit the auto-renewal to a single 12-month period with a reduced 60-day notice window, ensuring the clause includes a clear, accessible mechanism for sending non-renewal notices to prevent inadvertent lock-in.",
+      "statutory_alignment_score": 0.875
+    },
+    {
+      "category": "INDEMNITY",
+      "headline": "Uncapped Asymmetric Indemnification",
+      "latency_ms": 3094.36,
+      "statutory_note": "Under Section 23 of the Indian Contract Act, a contract is void if its consideration or object is unlawful or opposed to public policy; an uncapped, one\u2011sided indemnity that imposes potentially infinite liability on the customer is regarded as oppressive and contrary to the principle of reasonable reciprocity, rendering it voidable under Section 28. Moreover, Section 74 requires that any stipulated sum for breach be a genuine pre\u2011estimate of loss; an unlimited indemnity is likely to be treated as a penalty and therefore unenforceable. Consequently, the clause may be struck down as an unfair term violating statutory notions of equity and reasonableness.",
+      "negotiation_advice": "Seek to replace the clause with a mutual indemnity provision limited to liabilities arising from each party's negligence, and cap the indemnity amount at the aggregate fees paid by the customer in the preceding twelve months. Include a carve\u2011out for third\u2011party claims caused by the vendor's gross negligence or willful misconduct, and request a clear procedural mechanism for defense and control of claims. Emphasise commercial parity and risk proportionality to obtain the vendor's agreement.",
+      "statutory_alignment_score": 1.0
+    },
+    {
+      "category": "IP",
+      "headline": "Post-Termination Non-Compete Lockout",
+      "latency_ms": 3711.13,
+      "statutory_note": "Under Section 27 of the Indian Contract Act, 1872 any agreement that restrains a person from exercising a lawful trade, business or profession is void, and Section 23 further requires that consideration for a contract be lawful; a 24\u2011month blanket non\u2011compete across the entire country therefore contravenes both provisions and is unenforceable. Consequently, the clause is void ab initio and cannot be relied upon to restrict the employee's post\u2011termination employment.",
+      "negotiation_advice": "Seek to replace the absolute ban with a narrowly tailored restriction\u2014e.g., a 6\u2011month non\u2011solicitation or non\u2011compete limited to senior managerial roles and a reasonable geographic scope\u2014or negotiate a garden\u2011leave arrangement with compensation for the restricted period.",
+      "statutory_alignment_score": 0.95
+    },
+    {
+      "category": "LIABILITY",
+      "headline": "Arbitrary Liquidated Damages Penalty",
+      "latency_ms": 2311.61,
+      "statutory_note": "A clause that imposes a fixed $250,000 irrespective of actual loss is likely to be treated as a penalty and therefore unenforceable under Section 74 of the Indian Contract Act, 1872, which permits only a genuine pre\u2011estimate of loss; excessive liquidated damages are considered contrary to commercial fairness and public policy. Moreover, such a provision may be struck down as an unreasonable restraint on the parties' right to recover actual damages, violating the principle of equity embedded in the Act.",
+      "negotiation_advice": "Seek to replace the flat penalty with a liquidated damages formula that reflects a reasonable, pre\u2011agreed estimate of foreseeable loss (e.g., a % of contract value) and include a cap at the total contract price, while retaining the right to claim actual proven damages if they exceed the estimate.",
+      "statutory_alignment_score": 0.95
+    },
+    {
+      "category": "JURISDICTION",
+      "headline": "Exclusive Foreign Jurisdiction and Domestic Court Ouster",
+      "latency_ms": 734.99,
+      "statutory_note": "While Section 23 of the Indian Contract Act, 1872, permits parties to choose a foreign governing law, the exclusive ouster of Indian courts may be challenged as unconscionable or contrary to public policy if it renders the enforcement of rights practically impossible for the domestic party. Such a clause risks being deemed void under Section 23 if it effectively deprives the customer of a reasonable forum for redressal, particularly where the contract has a substantial nexus to India.",
+      "negotiation_advice": "Propose a compromise by retaining the Cayman Islands governing law for substantive interpretation but substituting the exclusive jurisdiction clause with a non-exclusive jurisdiction clause that permits proceedings in the courts of the customer's domicile, or alternatively, propose binding arbitration under the Arbitration and Conciliation Act, 1996, with the seat in a neutral jurisdiction to ensure enforceability under the New York Convention.",
+      "statutory_alignment_score": 0.95
+    }
+  ]
+}

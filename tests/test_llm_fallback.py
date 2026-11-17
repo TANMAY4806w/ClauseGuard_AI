@@ -33,9 +33,10 @@ def test_cascading_fallback_groq_to_gemini():
         assert response == "Gemini Analysis Success"
 
 
-def test_live_groq_inference_if_key_available():
+def test_live_inference_fallback_resilience():
+    """Verify that multi-provider fallback produces a valid response even under single-provider rate limits."""
     client = MultiProviderLLMClient()
-    if client.settings.GROQ_API_KEY:
-        res = client._call_groq("Say 'OK' in one word.", model=client.settings.PRIMARY_GROQ_MODEL)
+    if client.settings.has_llm_key:
+        res = client.generate_with_fallback("Say 'OK' in one word.")
         assert res is not None
         assert len(res) > 0

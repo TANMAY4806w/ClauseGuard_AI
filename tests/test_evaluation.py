@@ -2,6 +2,7 @@ import os
 import pytest
 
 from evaluation.run_ragas_eval import load_golden_dataset, run_benchmark
+from evaluation.run_llm_eval import run_llm_benchmark
 
 
 class TestEvaluationSuite:
@@ -40,3 +41,12 @@ class TestEvaluationSuite:
         assert metrics["context_precision"] >= 0.88, f"Context Precision {metrics['context_precision']} < 0.88"
         assert metrics["context_recall"] >= 0.85, f"Context Recall {metrics['context_recall']} < 0.85"
         assert metrics["verbatim_citation_precision"] == 1.0, "Citation precision must be 100%"
+
+    def test_llm_quality_gates(self):
+        """Verify statutory alignment, schema conformance, and fallback resilience for LLM."""
+        report = run_llm_benchmark()
+        assert report["all_gates_passed"] is True, f"LLM quality gates failed: {report['quality_gates']}"
+        assert report["metrics"]["statutory_alignment_score"] >= 0.75
+        assert report["metrics"]["schema_conformance_rate"] == 1.0
+        assert report["metrics"]["circuit_breaker_groq_to_gemini"] is True
+        assert report["metrics"]["blackout_deterministic_fallback"] is True

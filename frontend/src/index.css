@@ -4,55 +4,83 @@
   * {
     box-sizing: border-box;
   }
-  body {
-    background-color: #0b0f19;
-    color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  html, body {
+    background-color: #0b0c0e;
+    color: #f4f4f5;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
   }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
 }
 
-/* Custom scrollbars for audit log and copilot conversation */
+/* Subtle enterprise blueprint grid */
+.bg-blueprint-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Hairline glass surface */
+.glass-panel {
+  background: rgba(19, 20, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(24, 26, 32, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* High-craft scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #0b0c0e;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
+  background: #27272a;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 1);
+  background: #3f3f46;
 }
 
-/* Pulsing audio wave animation */
-@keyframes audio-pulse {
-  0%, 100% {
-    transform: scaleY(0.4);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
+/* Acoustic voice waveform visualizer */
+@keyframes voice-eq-1 {
+  0%, 100% { height: 6px; }
+  50% { height: 22px; }
+}
+@keyframes voice-eq-2 {
+  0%, 100% { height: 18px; }
+  50% { height: 8px; }
+}
+@keyframes voice-eq-3 {
+  0%, 100% { height: 10px; }
+  50% { height: 26px; }
+}
+@keyframes voice-eq-4 {
+  0%, 100% { height: 24px; }
+  50% { height: 12px; }
 }
 
-.animate-audio-bar-1 {
-  animation: audio-pulse 0.8s ease-in-out infinite alternate;
-}
-.animate-audio-bar-2 {
-  animation: audio-pulse 1.1s ease-in-out 0.15s infinite alternate;
-}
-.animate-audio-bar-3 {
-  animation: audio-pulse 0.7s ease-in-out 0.3s infinite alternate;
-}
-.animate-audio-bar-4 {
-  animation: audio-pulse 1s ease-in-out 0.1s infinite alternate;
-}
+.animate-eq-1 { animation: voice-eq-1 0.7s ease-in-out infinite alternate; }
+.animate-eq-2 { animation: voice-eq-2 0.9s ease-in-out 0.15s infinite alternate; }
+.animate-eq-3 { animation: voice-eq-3 0.65s ease-in-out 0.3s infinite alternate; }
+.animate-eq-4 { animation: voice-eq-4 0.85s ease-in-out 0.1s infinite alternate; }

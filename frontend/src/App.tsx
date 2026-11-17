@@ -41,7 +41,6 @@ export function App() {
             window.clearInterval(pollingIntervalRef.current);
             pollingIntervalRef.current = null;
           }
-          // Fetch final contract analysis
           const report = await apiClient.getAnalysis(docId);
           setAnalysis(report);
           setIsUploading(false);
@@ -80,7 +79,7 @@ export function App() {
       const uploadRes = await apiClient.uploadContract(file, context);
       setDocId(uploadRes.doc_id);
 
-      // If document was already analyzed and cached in Redis, load instantly
+      // Instant cache return
       if (uploadRes.status === 'COMPLETED') {
         const report = await apiClient.getAnalysis(uploadRes.doc_id);
         setAnalysis(report);
@@ -93,7 +92,6 @@ export function App() {
     }
   };
 
-  // Reset to Upload another contract
   const handleReset = () => {
     if (pollingIntervalRef.current) {
       window.clearInterval(pollingIntervalRef.current);
@@ -109,22 +107,21 @@ export function App() {
     setCopilotTriggerMessage(null);
   };
 
-  // When user clicks "Discuss with Copilot" on a specific clause card
   const handleAskCopilotAboutClause = (clause: ClauseAuditItem) => {
     const question = `Regarding ${clause.risk_id} (${clause.headline}, ${clause.citation.section}):\nWhy is this considered ${clause.risk_level} risk under Indian law, and how can I negotiate the recommended counter-term with the other party?`;
     setCopilotTriggerMessage(question);
     setMobileTab('copilot');
   };
 
-  // Filter findings
-  const filteredFindings = analysis?.findings.filter((item) => {
-    if (selectedFilter === 'ALL') return true;
-    return item.risk_level === selectedFilter;
-  }) || [];
+  const filteredFindings =
+    analysis?.findings.filter((item) => {
+      if (selectedFilter === 'ALL') return true;
+      return item.risk_level === selectedFilter;
+    }) || [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500/30 selection:text-indigo-200">
-      {/* Sticky Navbar */}
+    <div className="min-h-screen bg-[#0b0c0e] text-[#f4f4f5] flex flex-col font-sans selection:bg-amber-500/20 selection:text-amber-200">
+      {/* Sticky Workspace Header */}
       <Navbar
         currentDocName={contractFilename}
         onReset={handleReset}
@@ -132,12 +129,12 @@ export function App() {
       />
 
       <main className="flex-1 w-full">
-        {/* Step 1: Upload Dropzone & Voice Context */}
+        {/* Step 1: Upload Ingestion Desk */}
         {!docId && !analysis && (
           <Dropzone onAnalyze={handleAnalyze} isLoading={isUploading} />
         )}
 
-        {/* Step 2: Live Processing Progress Stepper */}
+        {/* Step 2: Processing Progress Stepper */}
         {isUploading && !analysis && (
           <ProgressStepper status={jobStatus} filename={contractFilename} />
         )}
@@ -145,7 +142,7 @@ export function App() {
         {/* Step 3: Executive Legal Risk Intelligence Dashboard */}
         {analysis && (
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
-            {/* Top Risk Gauge & Executive Summary */}
+            {/* Top Risk Gauge & Summary */}
             <RiskGauge
               score={analysis.overall_contract_risk_score}
               breakdown={analysis.risk_summary_breakdown}
@@ -155,11 +152,11 @@ export function App() {
             />
 
             {/* Filter Bar & Mobile View Switcher */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2 border-y border-slate-800">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2 border-y border-white/[0.06]">
               {/* Severity Filter Tabs */}
               <div className="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
-                <span className="flex items-center text-xs font-semibold text-slate-400 mr-1 shrink-0">
-                  <Filter className="h-3.5 w-3.5 mr-1 text-slate-500" />
+                <span className="flex items-center text-xs font-mono font-semibold text-zinc-500 mr-1 shrink-0 uppercase tracking-wider">
+                  <Filter className="h-3 w-3 mr-1 text-zinc-500" />
                   Severity:
                 </span>
                 {(['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'SAFE'] as const).map((level) => {
@@ -172,14 +169,14 @@ export function App() {
                     <button
                       key={level}
                       onClick={() => setSelectedFilter(level)}
-                      className={`inline-flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition shrink-0 ${
+                      className={`inline-flex items-center space-x-1.5 rounded-lg px-2.5 py-1 text-xs font-mono font-semibold transition shrink-0 ${
                         isActive
-                          ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-                          : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
+                          ? 'border border-amber-500/40 bg-amber-500/10 text-amber-300'
+                          : 'border border-white/[0.06] bg-[#121418] text-zinc-400 hover:text-white hover:border-white/[0.12]'
                       }`}
                     >
                       <span>{level}</span>
-                      <span className="rounded-full bg-slate-950/60 px-1.5 py-0.2 text-[10px] text-slate-300">
+                      <span className="rounded bg-black/40 px-1.5 py-0.2 text-[10px] text-zinc-300">
                         {count}
                       </span>
                     </button>
@@ -187,28 +184,28 @@ export function App() {
                 })}
               </div>
 
-              {/* Mobile Tab Switcher (Visible only on smaller screens) */}
-              <div className="flex sm:hidden w-full rounded-xl bg-slate-900 border border-slate-800 p-1">
+              {/* Mobile Tab Switcher */}
+              <div className="flex sm:hidden w-full rounded-lg bg-[#121418] border border-white/[0.06] p-1 font-mono">
                 <button
                   onClick={() => setMobileTab('audit')}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition ${
+                  className={`flex-1 flex items-center justify-center space-x-2 py-1.5 rounded text-xs font-semibold transition ${
                     mobileTab === 'audit'
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'border border-amber-500/30 bg-amber-500/10 text-amber-300'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
-                  <Layers className="h-4 w-4" />
-                  <span>Clause Findings ({filteredFindings.length})</span>
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>Findings ({filteredFindings.length})</span>
                 </button>
                 <button
                   onClick={() => setMobileTab('copilot')}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition ${
+                  className={`flex-1 flex items-center justify-center space-x-2 py-1.5 rounded text-xs font-semibold transition ${
                     mobileTab === 'copilot'
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'border border-amber-500/30 bg-amber-500/10 text-amber-300'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
-                  <MessageSquare className="h-4 w-4" />
+                  <MessageSquare className="h-3.5 w-3.5" />
                   <span>Counsel Copilot</span>
                 </button>
               </div>
@@ -222,21 +219,21 @@ export function App() {
                   mobileTab === 'copilot' ? 'hidden sm:block' : 'block'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                    <ShieldAlert className="h-4 w-4 text-indigo-400" />
-                    <span>Flagged Contract Hazards ({filteredFindings.length})</span>
+                <div className="flex items-center justify-between pb-1">
+                  <h3 className="text-xs font-mono font-bold text-zinc-400 uppercase tracking-widest flex items-center space-x-1.5">
+                    <ShieldAlert className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Contract Audit Dossier ({filteredFindings.length})</span>
                   </h3>
-                  <span className="text-xs text-slate-500">
-                    Showing {selectedFilter.toLowerCase()} clauses
+                  <span className="text-[11px] font-mono text-zinc-600">
+                    Filter: {selectedFilter}
                   </span>
                 </div>
 
                 {filteredFindings.length === 0 ? (
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-12 text-center">
-                    <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-400 mb-3" />
-                    <h4 className="font-semibold text-white">No clauses in this severity tier</h4>
-                    <p className="text-xs text-slate-400 mt-1">
+                  <div className="rounded-xl border border-white/[0.08] bg-[#121418] p-12 text-center">
+                    <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400 mb-2" />
+                    <h4 className="font-semibold text-white text-sm">No clauses in this severity tier</h4>
+                    <p className="text-xs text-zinc-400 mt-1 font-mono">
                       No contractual risks matched the active filter. Select &apos;ALL&apos; to view all audited terms.
                     </p>
                   </div>
@@ -271,11 +268,11 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/60 py-6 text-center text-xs text-slate-500">
-        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© 2026 ClauseGuard AI — Multi-Agent Legal Intelligence Microservice.</p>
-          <p className="text-slate-400">
-            Compliant with Sections 27, 73, 74 & 124 of the Indian Contract Act, 1872
+      <footer className="mt-auto border-t border-white/[0.06] bg-[#0b0c0e] py-5 text-center text-xs text-zinc-500 font-mono">
+        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <p>© 2026 ClauseGuard AI — Enterprise Legal Intelligence Microservice.</p>
+          <p className="text-zinc-400 text-[11px]">
+            Statutorily grounded under Sections 27, 73, 74 & 124 of the Indian Contract Act, 1872
           </p>
         </div>
       </footer>

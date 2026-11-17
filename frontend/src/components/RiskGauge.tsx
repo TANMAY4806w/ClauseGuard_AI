@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, AlertTriangle, Scale, FileText } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Scale, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 interface RiskGaugeProps {
   score: number;
@@ -16,35 +16,38 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
   flaggedCount,
   contractName,
 }) => {
-  // Determine risk grade and color scheme
-  let tierLabel = 'FAVORABLE';
+  let tierLabel = 'FAVORABLE TERMS';
   let tierColor = 'text-emerald-400';
   let strokeColor = '#10b981';
-  let badgeBg = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-  let advisoryText = 'This agreement contains low residual exposure. Standard contractual protections apply.';
+  let badgeBg = 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400';
+  let advisoryText =
+    'Standard bilateral commercial terms detected. Low residual liability exposure under the Indian Contract Act, 1872.';
 
   if (score >= 70) {
-    tierLabel = 'CRITICAL HAZARD';
+    tierLabel = 'CRITICAL EXPOSURE';
     tierColor = 'text-rose-400';
     strokeColor = '#f43f5e';
-    badgeBg = 'bg-rose-500/10 text-rose-400 border-rose-500/30';
-    advisoryText = 'Do NOT sign as drafted. Significant legal traps detected: uncapped liability, one-sided indemnity, or void non-compete clauses under Indian Law.';
+    badgeBg = 'border-rose-500/30 bg-rose-500/10 text-rose-400';
+    advisoryText =
+      'Do NOT sign as drafted. High-risk predatory terms detected: unilateral termination, uncapped indemnity, or void non-compete covenants under Section 27 of the Indian Contract Act, 1872.';
   } else if (score >= 45) {
-    tierLabel = 'HIGH RISK';
+    tierLabel = 'HIGH RISK TIER';
     tierColor = 'text-amber-400';
     strokeColor = '#f59e0b';
-    badgeBg = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-    advisoryText = 'Elevated contractual risk. Mandatory redlines required before execution to protect against unilateral termination or severe IP forfeiture.';
+    badgeBg = 'border-amber-500/30 bg-amber-500/10 text-amber-400';
+    advisoryText =
+      'Elevated contractual risk. Mandatory redlines required before signing to protect against unilateral price hikes, foreign jurisdiction, and IP forfeiture.';
   } else if (score >= 20) {
     tierLabel = 'MODERATE EXPOSURE';
     tierColor = 'text-yellow-400';
     strokeColor = '#eab308';
-    badgeBg = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
-    advisoryText = 'Moderate exposure. Some standard terms are slanted against your interest. Counter-terms recommended.';
+    badgeBg = 'border-yellow-500/30 bg-yellow-500/10 text-yellow-400';
+    advisoryText =
+      'Moderate commercial exposure. Certain terms are slanted against your interest. Counter-negotiation term substitutes recommended.';
   }
 
-  // Circular gauge calculation
-  const radius = 64;
+  // Circular gauge math
+  const radius = 56;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (Math.min(100, Math.max(0, score)) / 100) * circumference;
 
@@ -54,28 +57,28 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
   const lowCount = (breakdown['LOW'] || 0) + (breakdown['SAFE'] || 0);
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl backdrop-blur-md">
+    <div className="rounded-xl border border-white/[0.08] bg-[#121418] p-6 shadow-xl">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-        {/* Left: SVG Circular Risk Gauge */}
+        {/* Left: Gauge + Advisory Text */}
         <div className="flex items-center space-x-6">
-          <div className="relative flex items-center justify-center">
-            <svg className="h-36 w-36 transform -rotate-90">
-              {/* Background track circle */}
+          <div className="relative flex items-center justify-center shrink-0">
+            <svg className="h-32 w-32 transform -rotate-90">
+              {/* Background Track */}
               <circle
-                cx="72"
-                cy="72"
+                cx="64"
+                cy="64"
                 r={radius}
-                stroke="#1e293b"
-                strokeWidth="10"
+                stroke="#27272a"
+                strokeWidth="8"
                 fill="transparent"
               />
-              {/* Animated Progress circle */}
+              {/* Active Progress */}
               <circle
-                cx="72"
-                cy="72"
+                cx="64"
+                cy="64"
                 r={radius}
                 stroke={strokeColor}
-                strokeWidth="10"
+                strokeWidth="8"
                 fill="transparent"
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
@@ -84,75 +87,77 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center text-center">
-              <span className={`text-3xl font-black tracking-tight ${tierColor}`}>
+              <span className={`text-3xl font-black tracking-tight font-mono ${tierColor}`}>
                 {Math.round(score)}
               </span>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                Risk Score
+              <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">
+                Score / 100
               </span>
             </div>
           </div>
 
           <div className="space-y-1.5">
             <div className="flex items-center space-x-2">
-              <span className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-bold ${badgeBg}`}>
+              <span className={`inline-flex items-center rounded border px-2 py-0.5 text-[10px] font-bold font-mono uppercase tracking-wider ${badgeBg}`}>
                 {tierLabel}
               </span>
             </div>
-            <h3 className="text-lg font-bold text-white truncate max-w-xs sm:max-w-md">
+            <h3 className="text-base font-bold text-white truncate max-w-sm sm:max-w-md">
               {contractName}
             </h3>
-            <p className="text-xs text-slate-400 max-w-sm sm:max-w-md leading-relaxed">
+            <p className="text-xs text-zinc-400 max-w-sm sm:max-w-md leading-relaxed">
               {advisoryText}
             </p>
           </div>
         </div>
 
-        {/* Right: Risk Level Breakdown Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
+        {/* Right: Bento Metrics Matrix */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 w-full lg:w-auto">
           {/* Critical */}
-          <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-center min-w-[90px]">
-            <div className="flex items-center justify-center space-x-1 text-rose-400 mb-1">
-              <AlertCircle className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Critical</span>
+          <div className="rounded-lg border border-rose-500/20 bg-rose-500/[0.04] p-3 text-center min-w-[85px]">
+            <div className="flex items-center justify-center space-x-1 text-rose-400 mb-0.5">
+              <AlertCircle className="h-3 w-3" />
+              <span className="text-[10px] font-mono font-semibold uppercase">Critical</span>
             </div>
-            <span className="text-xl font-bold text-white">{criticalCount}</span>
+            <span className="text-lg font-bold font-mono text-white">{criticalCount}</span>
           </div>
 
           {/* High */}
-          <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-3 text-center min-w-[90px]">
-            <div className="flex items-center justify-center space-x-1 text-orange-400 mb-1">
-              <AlertTriangle className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">High</span>
+          <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.04] p-3 text-center min-w-[85px]">
+            <div className="flex items-center justify-center space-x-1 text-amber-400 mb-0.5">
+              <AlertTriangle className="h-3 w-3" />
+              <span className="text-[10px] font-mono font-semibold uppercase">High</span>
             </div>
-            <span className="text-xl font-bold text-white">{highCount}</span>
+            <span className="text-lg font-bold font-mono text-white">{highCount}</span>
           </div>
 
           {/* Medium */}
-          <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-3 text-center min-w-[90px]">
-            <div className="flex items-center justify-center space-x-1 text-yellow-400 mb-1">
-              <Scale className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Medium</span>
+          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/[0.04] p-3 text-center min-w-[85px]">
+            <div className="flex items-center justify-center space-x-1 text-yellow-400 mb-0.5">
+              <Scale className="h-3 w-3" />
+              <span className="text-[10px] font-mono font-semibold uppercase">Medium</span>
             </div>
-            <span className="text-xl font-bold text-white">{mediumCount}</span>
+            <span className="text-lg font-bold font-mono text-white">{mediumCount}</span>
           </div>
 
-          {/* Safe / Low */}
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-center min-w-[90px]">
-            <div className="flex items-center justify-center space-x-1 text-emerald-400 mb-1">
-              <FileText className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Low/Safe</span>
+          {/* Safe */}
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] p-3 text-center min-w-[85px]">
+            <div className="flex items-center justify-center space-x-1 text-emerald-400 mb-0.5">
+              <CheckCircle2 className="h-3 w-3" />
+              <span className="text-[10px] font-mono font-semibold uppercase">Safe</span>
             </div>
-            <span className="text-xl font-bold text-white">{lowCount}</span>
+            <span className="text-lg font-bold font-mono text-white">{lowCount}</span>
           </div>
 
-          {/* Total Audited */}
-          <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-center min-w-[90px]">
-            <div className="flex items-center justify-center space-x-1 text-slate-400 mb-1">
-              <FileText className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Flagged/Total</span>
+          {/* Flagged / Total Ratio */}
+          <div className="rounded-lg border border-white/[0.08] bg-[#16181f] p-3 text-center min-w-[85px] col-span-2 sm:col-span-1">
+            <div className="flex items-center justify-center space-x-1 text-zinc-400 mb-0.5">
+              <ShieldAlert className="h-3 w-3" />
+              <span className="text-[10px] font-mono font-semibold uppercase">Audit Ratio</span>
             </div>
-            <span className="text-xl font-bold text-slate-200">{flaggedCount}/{totalClauses}</span>
+            <span className="text-lg font-bold font-mono text-zinc-200">
+              {flaggedCount}/{totalClauses}
+            </span>
           </div>
         </div>
       </div>

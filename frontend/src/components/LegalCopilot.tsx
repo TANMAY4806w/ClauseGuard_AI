@@ -9,7 +9,6 @@ import {
   Copy,
   Check,
   Scale,
-  Volume2,
 } from 'lucide-react';
 import { useLiveTranscription } from '../hooks/useLiveTranscription';
 import { apiClient } from '../api/client';
@@ -33,7 +32,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: `Hello! I am your Legal Counsel Copilot for **${contractName}**. I have reviewed all flagged clauses against the **Indian Contract Act, 1872** and corporate best practices.\n\nAsk me anything: how to push back, what compromise terms to propose, or request a ready-to-send negotiation email.`,
+      content: `Hello. I am your Legal Counsel Copilot for **${contractName}**. I have reviewed all extracted clauses against the **Indian Contract Act, 1872** and corporate risk standards.\n\nYou can ask me: how to negotiate high-risk terms, compromise language, or request a ready-to-send pushback email.`,
     },
   ]);
   const [inputText, setInputText] = useState('');
@@ -64,12 +63,10 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
     },
   });
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isSending, partialTranscript]);
 
-  // Handle external trigger from RiskCard ("Discuss with Copilot")
   useEffect(() => {
     if (externalTriggerMessage) {
       handleSendMessage(externalTriggerMessage);
@@ -110,7 +107,8 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
         ...prev,
         {
           role: 'assistant',
-          content: 'I encountered an error retrieving counsel guidance. Please ensure the backend server is reachable and try again.',
+          content:
+            'I encountered an error retrieving counsel guidance. Please ensure the backend microservice is operational.',
         },
       ]);
     } finally {
@@ -139,39 +137,38 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full rounded-2xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4 bg-slate-950/60">
+    <div className="flex flex-col h-full rounded-xl border border-white/[0.08] bg-[#121418] shadow-xl overflow-hidden">
+      {/* Console Header */}
+      <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-3.5 bg-[#0e1014]">
         <div className="flex items-center space-x-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
-            <Bot className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
+            <Scale className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="font-bold text-white text-sm">Legal Counsel Copilot</h3>
-              <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/30">
-                Active Grounding
+              <h3 className="font-bold text-white text-xs sm:text-sm">Corporate Counsel Console</h3>
+              <span className="inline-flex items-center space-x-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.2 text-[9px] font-mono text-emerald-400 font-semibold">
+                <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                <span>GROUNDED</span>
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
-              Interactive statutory analysis & negotiation script generator
+            <p className="text-[10px] text-zinc-500 font-mono">
+              Indian Contract Act, 1872 • Strategic Redlines
             </p>
           </div>
         </div>
-
-        <Scale className="h-5 w-5 text-indigo-400 hidden sm:block" />
       </div>
 
       {/* Referenced Sections Header Bar */}
       {referencedSections.length > 0 && (
-        <div className="px-5 py-2 bg-slate-950/40 border-b border-slate-800/60 flex items-center space-x-2 overflow-x-auto text-[11px]">
-          <span className="text-slate-500 font-semibold uppercase tracking-wider shrink-0">
-            Referenced:
+        <div className="px-5 py-2 bg-[#0b0c0e] border-b border-white/[0.04] flex items-center space-x-2 overflow-x-auto text-[10px] font-mono">
+          <span className="text-zinc-500 uppercase tracking-wider shrink-0 font-bold">
+            Referenced Clauses:
           </span>
           {referencedSections.map((sec, i) => (
             <span
               key={i}
-              className="rounded-md bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 text-indigo-300 font-mono shrink-0"
+              className="rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-amber-300 shrink-0 font-medium"
             >
               {sec}
             </span>
@@ -179,36 +176,36 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
         </div>
       )}
 
-      {/* Chat Messages List */}
+      {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user';
           return (
             <div
               key={index}
-              className={`flex items-start space-x-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+              className={`flex items-start space-x-2.5 ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               {!isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 mt-1">
-                  <Bot className="h-4 w-4" />
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 mt-1">
+                  <Bot className="h-3.5 w-3.5" />
                 </div>
               )}
 
               <div
-                className={`group relative max-w-[85%] rounded-2xl px-4 py-3 text-xs sm:text-sm leading-relaxed ${
+                className={`group relative max-w-[88%] rounded-xl px-4 py-3 text-xs sm:text-[13px] leading-relaxed ${
                   isUser
-                    ? 'bg-indigo-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20'
-                    : 'bg-slate-950 border border-slate-800 text-slate-200 rounded-tl-none'
+                    ? 'bg-[#1e2029] border border-white/[0.1] text-zinc-100 rounded-tr-none'
+                    : 'bg-[#0b0c0e] border border-white/[0.06] text-zinc-200 rounded-tl-none font-mono'
                 }`}
               >
                 <div className="whitespace-pre-wrap">{msg.content}</div>
 
-                {/* Copy button on assistant messages */}
+                {/* Copy Button */}
                 {!isUser && (
                   <button
                     onClick={() => copyMessage(msg.content, index)}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition rounded-md p-1 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700"
-                    title="Copy response to clipboard"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition rounded p-1 bg-zinc-800/80 text-zinc-400 hover:text-white"
+                    title="Copy advice / email draft to clipboard"
                   >
                     {copiedIndex === index ? (
                       <Check className="h-3 w-3 text-emerald-400" />
@@ -220,33 +217,37 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
               </div>
 
               {isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-slate-300 border border-slate-700 mt-1">
-                  <User className="h-4 w-4" />
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/[0.1] bg-[#1a1c23] text-zinc-400 mt-1">
+                  <User className="h-3.5 w-3.5" />
                 </div>
               )}
             </div>
           );
         })}
 
-        {/* Streaming Thinking Indicator */}
+        {/* AI Generating Indicator */}
         {isSending && (
-          <div className="flex items-start space-x-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
-              <Bot className="h-4 w-4" />
+          <div className="flex items-start space-x-2.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
+              <Bot className="h-3.5 w-3.5" />
             </div>
-            <div className="rounded-2xl rounded-tl-none bg-slate-950 border border-slate-800 px-4 py-3 text-xs text-slate-400 flex items-center space-x-2">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400 animate-spin" />
-              <span>Analyzing Indian Contract Act precedent & drafting counsel strategy...</span>
+            <div className="rounded-xl rounded-tl-none bg-[#0b0c0e] border border-white/[0.06] px-4 py-2.5 text-xs text-zinc-400 flex items-center space-x-2 font-mono">
+              <Sparkles className="h-3.5 w-3.5 text-amber-400 animate-spin" />
+              <span>Synthesizing Indian statutory precedents & drafting strategy...</span>
             </div>
           </div>
         )}
 
-        {/* Live Audio Streaming Partial Preview */}
+        {/* Live Audio Transcription Streamer Banner */}
         {isRecording && (
-          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 flex items-center space-x-2 text-xs text-rose-300 animate-pulse">
-            <Volume2 className="h-4 w-4 text-rose-400 shrink-0" />
-            <span className="font-semibold">Transcribing:</span>
-            <span className="italic truncate">{partialTranscript || 'Listening to your voice...'}</span>
+          <div className="rounded-lg border border-rose-500/30 bg-rose-500/[0.06] p-2.5 flex items-center space-x-2.5 text-xs text-rose-300 font-mono">
+            <div className="flex items-end space-x-1 h-3.5">
+              <span className="w-1 bg-rose-500 rounded-full animate-eq-1" />
+              <span className="w-1 bg-rose-500 rounded-full animate-eq-2" />
+              <span className="w-1 bg-rose-500 rounded-full animate-eq-3" />
+            </div>
+            <span className="font-bold uppercase text-[10px]">Streaming:</span>
+            <span className="italic truncate">{partialTranscript || 'Listening to microphone...'}</span>
           </div>
         )}
 
@@ -255,13 +256,15 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
 
       {/* Suggested Follow-up Chips */}
       {followups.length > 0 && !isSending && (
-        <div className="px-5 py-2.5 bg-slate-950/40 border-t border-slate-800/60 flex items-center space-x-2 overflow-x-auto text-xs">
-          <span className="text-[11px] font-semibold text-slate-400 shrink-0">Quick Ask:</span>
+        <div className="px-5 py-2.5 bg-[#0e1014] border-t border-white/[0.04] flex items-center space-x-1.5 overflow-x-auto text-[11px] font-mono">
+          <span className="text-zinc-500 uppercase tracking-widest text-[9px] font-bold shrink-0">
+            Suggested:
+          </span>
           {followups.map((item, idx) => (
             <button
               key={idx}
               onClick={() => handleSendMessage(item)}
-              className="rounded-full border border-slate-800 bg-slate-900 px-3 py-1 text-[11px] text-slate-300 hover:border-indigo-500/50 hover:bg-slate-850 hover:text-white transition shrink-0"
+              className="rounded border border-white/[0.08] bg-[#14161d] px-2.5 py-1 text-zinc-300 hover:border-amber-500/40 hover:text-amber-200 transition shrink-0"
             >
               {item}
             </button>
@@ -269,13 +272,13 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
         </div>
       )}
 
-      {/* Input Form with Live Streaming Mic */}
+      {/* Input Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="p-4 border-t border-slate-800 bg-slate-950/80"
+        className="p-3.5 border-t border-white/[0.06] bg-[#0e1014]"
       >
         <div className="flex items-center space-x-2">
           {/* Live Mic Button */}
@@ -283,41 +286,41 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
             type="button"
             onClick={toggleVoiceRecording}
             disabled={isSending || isConnecting}
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition ${
               isRecording
-                ? 'bg-rose-500 text-white animate-pulse shadow-lg shadow-rose-500/30'
-                : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                ? 'border-rose-500 bg-rose-500 text-white shadow-sm shadow-rose-500/30'
+                : 'border-white/[0.08] bg-[#14161d] text-zinc-400 hover:border-amber-500/40 hover:text-white'
             }`}
-            title={isRecording ? 'Stop Voice Recording' : 'Speak via AssemblyAI Live WebSocket'}
+            title={isRecording ? 'Stop Voice Recording' : 'Speak via AssemblyAI v3 WebSocket'}
           >
-            {isRecording ? <MicOff className="h-4 w-4 text-white" /> : <Mic className="h-4 w-4" />}
+            {isRecording ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5 text-amber-400" />}
           </button>
 
-          {/* Text input */}
+          {/* Text Input */}
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
               isRecording
-                ? 'Transcribing live audio...'
-                : 'Ask counsel: "How should I reply to the client?"...'
+                ? 'Transcribing live voice...'
+                : 'Ask counsel: "How should I push back on Section 14?"...'
             }
             disabled={isSending}
-            className="flex-1 rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="flex-1 rounded-lg border border-white/[0.08] bg-[#0b0c0e] px-3.5 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30 font-mono"
           />
 
-          {/* Send button */}
+          {/* Send Button */}
           <button
             type="submit"
             disabled={!inputText.trim() || isSending}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
-            title="Send Message"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-600 text-white shadow-sm transition hover:bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Send Consultation Message"
           >
             {isSending ? (
-              <Sparkles className="h-4 w-4 animate-spin" />
+              <Sparkles className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             )}
           </button>
         </div>

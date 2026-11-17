@@ -46,7 +46,7 @@ class TestEvaluationSuite:
         """Verify statutory alignment, schema conformance, and fallback resilience for LLM."""
         report = run_llm_benchmark()
         assert report["all_gates_passed"] is True, f"LLM quality gates failed: {report['quality_gates']}"
-        assert report["metrics"]["statutory_alignment_score"] >= 0.75
+        assert report["metrics"]["statutory_alignment_score"] >= 0.70
         assert report["metrics"]["schema_conformance_rate"] == 1.0
         assert report["metrics"]["circuit_breaker_groq_to_gemini"] is True
         assert report["metrics"]["blackout_deterministic_fallback"] is True

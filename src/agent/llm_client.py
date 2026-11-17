@@ -28,9 +28,16 @@ class MultiProviderLLMClient:
         }
         self._healthy_model_cache: Dict[str, bool] = {}
 
+    @staticmethod
+    def _is_valid_key(key: Optional[str]) -> bool:
+        if not key:
+            return False
+        clean = key.strip().lower()
+        return not (clean.startswith("your_") or "placeholder" in clean or "dummy" in clean)
+
     def _call_groq(self, prompt: str, model: str) -> Optional[str]:
         """Execute chat completion via Groq API."""
-        if not self.settings.GROQ_API_KEY:
+        if not self._is_valid_key(self.settings.GROQ_API_KEY):
             return None
         
         url = "https://api.groq.com/openai/v1/chat/completions"
@@ -68,7 +75,7 @@ class MultiProviderLLMClient:
 
     def _call_gemini(self, prompt: str, model: str) -> Optional[str]:
         """Execute generation via Google Gemini API."""
-        if not self.settings.GEMINI_API_KEY:
+        if not self._is_valid_key(self.settings.GEMINI_API_KEY):
             return None
 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={self.settings.GEMINI_API_KEY}"
@@ -107,7 +114,7 @@ class MultiProviderLLMClient:
 
     def _call_openrouter(self, prompt: str, model: str = "liquid/lfm-3-1.7b:free") -> Optional[str]:
         """Execute chat completion via OpenRouter API."""
-        if not self.settings.OPENROUTER_API_KEY:
+        if not self._is_valid_key(self.settings.OPENROUTER_API_KEY):
             return None
 
         url = "https://openrouter.ai/api/v1/chat/completions"

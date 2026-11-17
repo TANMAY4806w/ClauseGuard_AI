@@ -37,6 +37,9 @@ class TestSettings:
         s_without = Settings(GROQ_API_KEY=None, GEMINI_API_KEY=None, OPENROUTER_API_KEY=None)
         assert s_without.has_llm_key is False
 
+        s_placeholder = Settings(GROQ_API_KEY=None, GEMINI_API_KEY="your_gemini_api_key_here", OPENROUTER_API_KEY=None)
+        assert s_placeholder.has_llm_key is False
+
         s_with_gemini = Settings(GROQ_API_KEY=None, GEMINI_API_KEY="test_key_123", OPENROUTER_API_KEY=None)
         assert s_with_gemini.has_llm_key is True
 

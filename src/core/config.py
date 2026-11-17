@@ -80,8 +80,13 @@ class Settings(BaseSettings):
 
     @property
     def has_llm_key(self) -> bool:
-        """Check if at least one valid LLM provider key is present."""
-        return bool(self.GROQ_API_KEY or self.GEMINI_API_KEY or self.OPENROUTER_API_KEY)
+        """Check if at least one real (non-placeholder) LLM provider key is present."""
+        def is_real(k: Optional[str]) -> bool:
+            if not k:
+                return False
+            clean = k.strip().lower()
+            return not (clean.startswith("your_") or "placeholder" in clean or "dummy" in clean)
+        return is_real(self.GROQ_API_KEY) or is_real(self.GEMINI_API_KEY) or is_real(self.OPENROUTER_API_KEY)
 
 
 @lru_cache()

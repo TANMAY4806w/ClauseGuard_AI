@@ -40,3 +40,15 @@ def test_live_inference_fallback_resilience():
         res = client.generate_with_fallback("Say 'OK' in one word.")
         assert res is not None
         assert len(res) > 0
+    else:
+        # Fallback verification in environments without live API secrets (e.g. CI)
+        res = client.enrich_risk_with_legal_context(
+            category="IP",
+            verbatim_quote="Non-compete 24 months",
+            headline="Non-compete",
+            danger_summary="Restricts trade",
+            counter_term="Delete clause",
+        )
+        assert res is not None
+        assert "statutory_compliance_note" in res
+        assert "Section 27" in res["statutory_compliance_note"]

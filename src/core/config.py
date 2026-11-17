@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     PRIMARY_GEMINI_MODEL: str = Field(default="gemma-4-26b-a4b-it", description="Primary Gemini model")
     FALLBACK_GEMINI_MODEL: str = Field(default="gemini-flash-latest", description="Fallback Gemini model")
 
+    # Speech-to-Text & Real-Time Streaming
+    ASSEMBLYAI_API_KEY: Optional[str] = Field(default=None, description="AssemblyAI API Key for Real-Time WebSocket")
+
     # Vector Database (Qdrant)
     QDRANT_MODE: Literal["local", "server", "memory"] = Field(
         default="local",

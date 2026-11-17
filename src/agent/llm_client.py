@@ -262,3 +262,94 @@ Do not enclose in markdown code blocks if possible.
                 "statutory_compliance_note": note_val,
                 "negotiation_advice": advice_val,
             }
+
+    def counsel_contract_chat(
+        self,
+        contract_title: str,
+        findings: List[Dict[str, Any]],
+        retrieved_clauses: List[Dict[str, Any]],
+        client_question: str,
+        history: Optional[List[Dict[str, str]]] = None,
+        client_context: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Interactive corporate counsel legal consultation grounded in contract findings and Indian statutory law.
+        """
+        # Format key risks summary for prompt
+        risk_summary_lines = []
+        referenced_sections = set()
+        for f in findings:
+            cite = f.get("citation", {})
+            sec = cite.get("section", cite.get("section_number", "N/A"))
+            referenced_sections.add(sec)
+            risk_summary_lines.append(
+                f"- [{f.get('risk_level', 'HIGH')}] {f.get('headline', '')} ({sec}): {f.get('danger_summary', '')}"
+            )
+
+        risks_text = "\n".join(risk_summary_lines) if risk_summary_lines else "No critical risks detected."
+
+        # Format retrieved context
+        clause_snippets = []
+        for c in retrieved_clauses:
+            sec = c.get("section_number", "")
+            if sec:
+                referenced_sections.add(sec)
+            clause_snippets.append(f"Section {sec} (Page {c.get('page_number', '?')}):\n\"{c.get('raw_text', '')}\"")
+        clauses_text = "\n\n".join(clause_snippets[:4]) if clause_snippets else "No specific matching clauses retrieved."
+
+        # Format conversation history
+        history_lines = []
+        if history:
+            for m in history[-4:]:
+                history_lines.append(f"{m.get('role', 'user').capitalize()}: {m.get('content', '')}")
+        history_text = "\n".join(history_lines) if history_lines else "None."
+
+        context_prompt = f"Client Background / Priorities: {client_context}\n" if client_context else ""
+
+        prompt = f"""You are a top-tier Corporate Legal Counsel and Contract Negotiation Strategist advising your client.
+Contract Title: {contract_title}
+{context_prompt}
+KEY FLAGGED RISKS:
+{risks_text}
+
+RELEVANT CONTRACT CLAUSES:
+{clauses_text}
+
+CONVERSATION HISTORY:
+{history_text}
+
+CLIENT'S QUESTION / INSTRUCTION:
+"{client_question}"
+
+Instructions:
+1. Act like a real corporate lawyer advising the client directly in clear, reassuring, and assertive language.
+2. Ground your advice specifically in the contract clauses and verified risks above.
+3. If they ask what to say or email, provide a professional, ready-to-copy negotiation email script.
+4. If relevant, cite protections under the Indian Contract Act, 1872 (e.g. Section 23 for unconscionable terms, Section 27 for non-compete restraint of trade, Section 28 for court ouster, Section 74 for penalty damages, Section 124 for indemnities).
+5. Suggest practical compromises ("Ask for X; if they push back, settle for Y").
+
+Respond directly with your strategic advice.
+"""
+        reply = self.generate_with_fallback(prompt)
+        if not reply:
+            # Deterministic fallback response if all external LLMs are offline
+            reply = (
+                f"Based on my audit of {contract_title}, you have significant leverage to negotiate. "
+                "For high-risk clauses such as termination and indemnity, I recommend requesting mutual terms "
+                "and a 30-day notice period. Under Section 23 and Section 27 of the Indian Contract Act 1872, "
+                "unilateral restrictions without reciprocal balance are legally vulnerable. "
+                "You can propose replacing unilateral liabilities with an aggregate cap equal to fees paid."
+            )
+
+        # Generate suggested followups
+        suggested = [
+            "Draft a negotiation email to send to the other party",
+            "What happens if they refuse to change this clause?",
+            "What is my fallback compromise position?",
+        ]
+
+        return {
+            "reply": reply.strip(),
+            "referenced_sections": list(referenced_sections)[:5],
+            "suggested_followups": suggested,
+        }

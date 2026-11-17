@@ -78,3 +78,40 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int
+
+
+class VoiceTokenResponse(BaseModel):
+    """Temporary token response for AssemblyAI real-time WebSocket streaming."""
+    token: str = Field(..., description="Single-use streaming authentication token")
+    expires_in_seconds: int = Field(default=300, description="Token validity window in seconds")
+    websocket_url: str = Field(
+        default="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+        description="Target WebSocket endpoint for streaming audio",
+    )
+
+
+class ChatRoleEnum(str, Enum):
+    USER = "user"
+    ASSISTANT = "assistant"
+    SYSTEM = "system"
+
+
+class ChatMessage(BaseModel):
+    role: ChatRoleEnum
+    content: str
+
+
+class ContractChatRequest(BaseModel):
+    """Request schema for conversational legal counsel copilot."""
+    message: str = Field(..., min_length=1, description="Client question or negotiation prompt")
+    history: Optional[List[ChatMessage]] = Field(default_factory=list, description="Recent conversation history")
+    client_context: Optional[str] = Field(default=None, description="Optional personal context or leverage priorities")
+
+
+class ContractChatResponse(BaseModel):
+    """Response schema for conversational legal counsel copilot."""
+    doc_id: str
+    reply: str = Field(..., description="Actionable corporate counsel legal guidance")
+    referenced_sections: List[str] = Field(default_factory=list, description="Specific contract sections referenced")
+    suggested_followups: List[str] = Field(default_factory=list, description="Recommended next legal questions")
+

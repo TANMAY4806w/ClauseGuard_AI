@@ -1,18 +1,24 @@
 import hashlib
+import json
+import urllib.request
+import urllib.error
 import uuid
 from typing import Any, Dict, Optional
-from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.core.config import get_settings
 from src.core.logger import get_logger
 from src.api.schemas import (
     ContractAnalysisResponse,
+    ContractChatRequest,
+    ContractChatResponse,
     ClauseAuditItem,
     CitationModel,
     JobStatusResponse,
     TokenResponse,
     UploadResponse,
+    VoiceTokenResponse,
 )
 from src.services.cache import CacheService, get_cache_service
 from src.ingestion.pdf_parser import PDFParser
@@ -20,6 +26,7 @@ from src.ingestion.chunker import SemanticClauseChunker
 from src.vectorstore.qdrant_client import QdrantVectorStore
 from src.vectorstore.reranker import FlashRankReranker
 from src.agent.mcp_server import MCPServer
+from src.agent.llm_client import MultiProviderLLMClient
 from src.agent.graph import build_clauseguard_graph
 
 logger = get_logger(__name__)
@@ -123,10 +130,47 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
 
 
+@router.get("/voice/token", response_model=VoiceTokenResponse)
+async def get_voice_streaming_token():
+    """
+    Mint a 300-second single-use streaming authentication token from AssemblyAI v3
+    for real-time live WebSocket speech-to-text.
+    """
+    settings = get_settings()
+    key = settings.ASSEMBLYAI_API_KEY
+    if not key or key.strip().lower().startswith("your_") or "placeholder" in key.lower():
+        # Demo token fallback for isolated / offline testing
+        return VoiceTokenResponse(
+            token="mock_voice_token_demo_streaming",
+            expires_in_seconds=300,
+            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+        )
+
+    url = "https://streaming.assemblyai.com/v3/token?expires_in_seconds=300"
+    req = urllib.request.Request(url, headers={"Authorization": key})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return VoiceTokenResponse(
+                token=data["token"],
+                expires_in_seconds=data.get("expires_in_seconds", 300),
+                websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+            )
+    except Exception as e:
+        logger.error(f"Failed to mint AssemblyAI streaming token: {e}")
+        # Return fallback gracefully rather than breaking UI
+        return VoiceTokenResponse(
+            token="fallback_voice_token",
+            expires_in_seconds=300,
+            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+        )
+
+
 @router.post("/contracts/upload", response_model=UploadResponse, status_code=status.HTTP_202_ACCEPTED)
 async def upload_contract(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
+    client_context: Optional[str] = Form(None),
     cache: CacheService = Depends(get_cache_service),
 ):
     """
@@ -238,3 +282,47 @@ async def get_contract_analysis(
         )
 
     return ContractAnalysisResponse(**report)
+
+
+@router.post("/contracts/{doc_id}/chat", response_model=ContractChatResponse)
+async def chat_with_legal_counsel(
+    doc_id: str,
+    req: ContractChatRequest,
+    cache: CacheService = Depends(get_cache_service),
+):
+    """
+    Interactive corporate legal counsel consultation grounded in the audited contract
+    and Indian Contract Act 1872.
+    """
+    report = cache.get_job_result(doc_id) or {}
+    contract_title = report.get("contract_name", doc_id)
+    findings = report.get("findings", [])
+
+    # Semantic retrieval from Qdrant matching user's specific query
+    retrieved = []
+    try:
+        vstore = QdrantVectorStore()
+        reranker = FlashRankReranker()
+        mcp = MCPServer(vector_store=vstore, reranker=reranker)
+        retrieved = mcp.query_contract_vector_store(doc_id=doc_id, query=req.message, limit=4)
+    except Exception as e:
+        logger.warning(f"Vector store retrieval warning for chat on doc {doc_id}: {e}")
+
+    # Invoke multi-provider legal counsel
+    llm = MultiProviderLLMClient()
+    history_dicts = [{"role": m.role.value, "content": m.content} for m in (req.history or [])]
+    advice = llm.counsel_contract_chat(
+        contract_title=contract_title,
+        findings=findings,
+        retrieved_clauses=retrieved,
+        client_question=req.message,
+        history=history_dicts,
+        client_context=req.client_context,
+    )
+
+    return ContractChatResponse(
+        doc_id=doc_id,
+        reply=advice["reply"],
+        referenced_sections=advice.get("referenced_sections", []),
+        suggested_followups=advice.get("suggested_followups", []),
+    )

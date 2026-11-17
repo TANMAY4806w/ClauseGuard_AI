@@ -2,8 +2,8 @@
 
 > **Update Protocol:** This checklist is inspected and synced whenever milestone updates are provided to the user.
 
-*Last Synchronized:* 2026-11-16T01:10:00+05:30  
-*Current Phase:* **Phase 4: FastAPI REST API & Redis Acceleration**
+*Last Synchronized:* 2026-11-17T16:45:00+05:30  
+*Current Phase:* **Phase 5: Ragas Evaluation & Golden Dataset Benchmarking**
 
 ---
 
@@ -41,7 +41,20 @@
 ---
 
 ### Phase 4: FastAPI REST API & Redis Acceleration
-- [ ] **Task 4.1:** Implement Pydantic V2 schemas in `src/api/schemas.py`.
+- [x] **Task 4.1:** Implement Pydantic V2 schemas in `src/api/schemas.py`.
+- [x] **Task 4.2:** Implement Redis caching & state service in `src/services/cache.py`.
+- [x] **Task 4.3:** Implement asynchronous endpoints in `src/api/routes.py`:
+  - `POST /api/v1/auth/token`
+  - `POST /api/v1/contracts/upload`
+  - `GET /api/v1/contracts/{doc_id}/status`
+  - `GET /api/v1/contracts/{doc_id}/analysis`
+- [x] **Task 4.4:** Build application entry point in `src/main.py`.
+- [x] **Gate 4:** Launch Uvicorn; test upload, status polling, and cached re-upload via TestClient (5/5 tests passed; 22/22 total).
+
+---
+
+### Phase 5: Ragas Evaluation & Golden Dataset Benchmarking
+- [ ] **Task 5.1:** Populate `data/golden_eval_dataset/golden_contracts.json` with 30+ labeled ground-truth clauses.
 - [ ] **Task 4.2:** Implement Redis caching & state service in `src/services/cache.py`.
 - [ ] **Task 4.3:** Implement asynchronous endpoints in `src/api/routes.py`:
   - `POST /api/v1/auth/token`

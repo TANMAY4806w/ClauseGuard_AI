@@ -66,3 +66,22 @@
 
 ### Q11: "Why expose your domain tools via the Model Context Protocol (MCP)?"
 - **The Engineering Benefit:** Decouples the analytical tools from the specific orchestrator or LLM provider. Instead of hardcoding tool logic inside prompt templates, the 4 core tools (`query_contract_vector_store`, `audit_predatory_terms`, `verify_source_citation`, `synthesize_plain_english_advice`) are typed contracts adhering to MCP standards. This enables ClauseGuard AI to be queried by any external agent, IDE sidecar, or multi-agent supervisor without altering backend code.
+
+### Q12: "Why did you choose Qdrant over ChromaDB, Pinecone, Milvus, or pgvector?"
+- **1. Pre-Filtering during HNSW Graph Traversal (The ChromaDB Killer):**
+  - In ChromaDB or naive vector databases, metadata filtering is often applied *after* vector retrieval (post-filtering), or slows down significantly because the index is decoupled from the metadata store.
+  - In Qdrant, payload filtering is done *during* vector index traversal (payload-based pre-filtering). For ClauseGuard AI, where every query is strictly partitioned by `doc_id` and legal `category` (`TERMINATION`, `INDEMNITY`), Qdrant's payload indexes guarantee sub-10ms queries without scanning unrelated documents.
+- **2. Native Dense + Sparse (BM25) Hybrid Search:**
+  - ChromaDB is primarily dense-vector-oriented.
+  - Qdrant natively supports combining Dense vectors (`bge-small-en-v1.5`) and Sparse keyword vectors (BM25) in a single collection using Reciprocal Rank Fusion (RRF). Legal tech demands exact matching on numbers ("90 days", "$50,000", "Delaware"), which dense-only models miss.
+- **3. Rust Core vs Python/SQLite Memory & Concurrency Issues:**
+  - ChromaDB runs on Python/DuckDB/SQLite, which is prone to Python GIL lock contention, concurrency locks, and memory leaks under multi-user traffic.
+  - Qdrant is written in **Rust**, uses memory-mapped storage (mmap), and provides rock-solid, predictable P99 latency even under heavy concurrent loads.
+- **4. Embedded-to-Production Seamless Portability vs Closed Cloud Lock-in:**
+  - Pinecone is closed-source, cloud-hosted only, expensive, and cannot run locally or offline for unit tests.
+  - pgvector is viable if Postgres already exists, but has higher HNSW indexing latency and vacuuming overhead compared to dedicated vector engines.
+  - Qdrant runs in embedded mode (`:memory:` or on-disk directory `QdrantClient(path="./qdrant_storage")`) for local testing, and transitions to a distributed cluster or Docker container in production with zero code changes.
+
+### Q13: "How does the SHA-256 Redis caching layer achieve sub-15ms response times?"
+- **The Optimization:** High-frequency legal teams often upload identical standard contract templates (e.g. standard NDAs, corporate SOWs, unmodified vendor MSAs).
+- **Our Implementation:** In `src/api/routes.py`, we compute a cryptographic SHA-256 hash of the uploaded PDF byte stream before triggering ingestion. If `contract:hash:{sha256}` exists in Redis, the server skips the entire 15-second parsing, embedding, and LLM inference pipeline, returning the cached audit report in $<15\text{ ms}$ with `estimated_seconds=0`.

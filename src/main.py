@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from src.core.config import get_settings
 from src.core.logger import get_logger, setup_logging
@@ -63,6 +64,12 @@ def create_application() -> FastAPI:
             "message": "ClauseGuard AI is operational. Visit /docs for interactive Swagger UI.",
             "docs": "/docs",
         }
+
+    # Mount frontend static distribution if built
+    frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+    if os.path.exists(frontend_dist) and os.path.exists(os.path.join(frontend_dist, "index.html")):
+        from fastapi.staticfiles import StaticFiles
+        app.mount("/app", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
     return app
 

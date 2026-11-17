@@ -47,6 +47,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   const [referencedSections, setReferencedSections] = useState<string[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const baseInputRef = useRef('');
 
   // Live WebSocket Audio Transcription Hook
   const {
@@ -58,7 +59,8 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
     resetTranscript,
   } = useLiveTranscription({
     onTranscriptUpdate: (fullText) => {
-      setInputText((prev) => (prev ? `${prev} ${fullText}` : fullText));
+      const base = baseInputRef.current.trim();
+      setInputText(base ? `${base} ${fullText}` : fullText);
     },
   });
 
@@ -120,6 +122,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
     if (isRecording) {
       stopRecording();
     } else {
+      baseInputRef.current = inputText;
       resetTranscript();
       startRecording();
     }

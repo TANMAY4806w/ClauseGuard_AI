@@ -24,6 +24,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const baseContextRef = useRef('');
 
   // Live WebSocket Audio Transcription Hook
   const {
@@ -35,7 +36,8 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
     resetTranscript,
   } = useLiveTranscription({
     onTranscriptUpdate: (fullText) => {
-      setClientContext((prev) => (prev ? `${prev} ${fullText}` : fullText));
+      const base = baseContextRef.current.trim();
+      setClientContext(base ? `${base} ${fullText}` : fullText);
     },
     onError: (err) => {
       setErrorMessage(`Microphone streaming error: ${err}`);
@@ -104,6 +106,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
     if (isRecording) {
       stopRecording();
     } else {
+      baseContextRef.current = clientContext;
       resetTranscript();
       startRecording();
     }

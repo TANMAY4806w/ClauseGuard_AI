@@ -215,3 +215,46 @@ All endpoints run on Python 3.11+ using asynchronous `async def` route handlers.
     "audit_timestamp": "2026-11-13T22:30:00Z"
   }
   ```
+
+### 3.5 `GET /api/v1/voice/token`
+* **Description:** Mints a temporary, single-use 300-second authentication token for live client-side WebSocket audio streaming via AssemblyAI v3.
+* **Response (200 OK):**
+  ```json
+  {
+    "token": "eyJhbGciOi...",
+    "expires_in_seconds": 300,
+    "websocket_url": "wss://streaming.assemblyai.com/v3/ws?sample_rate=16000"
+  }
+  ```
+
+### 3.6 `POST /api/v1/contracts/{doc_id}/chat`
+* **Description:** Interactive conversational legal counsel copilot. Formulates grounded advice, explains provisions of the Indian Contract Act 1872, recommends compromise terms, and generates ready-to-send negotiation emails.
+* **Request Body:**
+  ```json
+  {
+    "message": "The client insists on keeping Section 14.2. What should I reply in an email to push back politely?",
+    "history": [
+      {
+        "role": "user",
+        "content": "Is Section 14.2 hazardous?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, Section 14.2 imposes a strict 90-day auto-renewal lock-in."
+      }
+    ],
+    "client_context": "I am a freelance engineer based in India with limited bargaining leverage."
+  }
+  ```
+* **Response (200 OK):**
+  ```json
+  {
+    "doc_id": "9a7b2c3d-e4f5-4a6b-8c7d-0e1f2a3b4c5d",
+    "reply": "Dear Client,\n\nThank you for sharing the draft agreement. Regarding Section 14.2 (Automatic Renewal), a 90-day advance notice window creates significant administrative exposure for our team. We propose amending this to a standard 30-day notice period...\n\nUnder Indian commercial standards, mutual 30-day notice provides fair operational predictability for both parties.",
+    "referenced_sections": ["Section 14.2"],
+    "suggested_followups": [
+      "What if they reject the 30-day notice proposal?",
+      "Can I add a termination for convenience clause?"
+    ]
+  }
+  ```

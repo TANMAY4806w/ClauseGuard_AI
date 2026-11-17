@@ -2,9 +2,52 @@ import { useState, useRef, useCallback } from 'react';
 import { apiClient } from '../api/client';
 
 export interface UseLiveTranscriptionOptions {
-  onTranscriptUpdate?: (fullText: string) => void;
+  /**
+   * Called whenever a finalized chunk arrives.
+   * @param fullText The full accumulated text for the current recording session.
+   * @param latestChunk The specific final chunk just recognized.
+   */
+  onTranscriptUpdate?: (fullText: string, latestChunk: string) => void;
   onPartialUpdate?: (partialText: string) => void;
   onError?: (err: string) => void;
+}
+
+/**
+ * Resamples audio buffer from input sample rate to target 16kHz Int16 linear PCM.
+ * Compatible with any hardware sample rate (44.1kHz, 48kHz, 96kHz, 16kHz).
+ */
+function downsampleTo16kHz(buffer: Float32Array, inputSampleRate: number): Int16Array {
+  if (inputSampleRate === 16000) {
+    const pcm16 = new Int16Array(buffer.length);
+    for (let i = 0; i < buffer.length; i++) {
+      const s = Math.max(-1, Math.min(1, buffer[i]));
+      pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+    return pcm16;
+  }
+
+  const sampleRateRatio = inputSampleRate / 16000;
+  const newLength = Math.round(buffer.length / sampleRateRatio);
+  const result = new Int16Array(newLength);
+  let offsetResult = 0;
+  let offsetBuffer = 0;
+
+  while (offsetResult < result.length) {
+    const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+    let accum = 0;
+    let count = 0;
+    for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+      accum += buffer[i];
+      count++;
+    }
+    const avg = count > 0 ? accum / count : 0;
+    const s = Math.max(-1, Math.min(1, avg));
+    result[offsetResult] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    offsetResult++;
+    offsetBuffer = nextOffsetBuffer;
+  }
+
+  return result;
 }
 
 export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) {
@@ -17,6 +60,7 @@ export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) 
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
   const accumulatedRef = useRef<string>('');
 
   const stopRecording = useCallback(() => {
@@ -27,6 +71,11 @@ export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) 
     if (processorRef.current) {
       processorRef.current.disconnect();
       processorRef.current = null;
+    }
+
+    if (gainNodeRef.current) {
+      gainNodeRef.current.disconnect();
+      gainNodeRef.current = null;
     }
 
     if (streamRef.current) {
@@ -67,9 +116,9 @@ export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
-          sampleRate: 16000,
           echoCancellation: true,
           noiseSuppression: true,
+          autoGainControl: true,
         },
       });
       streamRef.current = stream;
@@ -84,40 +133,49 @@ export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) 
 
         // 4. Setup AudioContext and PCM streaming
         const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        const audioCtx = new AudioCtx({ sampleRate: 16000 });
+        const audioCtx = new AudioCtx();
         audioContextRef.current = audioCtx;
 
         const source = audioCtx.createMediaStreamSource(stream);
-        // ScriptProcessor buffer size: 4096 gives ~256ms chunk at 16kHz
+        // ScriptProcessor buffer size: 4096 samples
         const processor = audioCtx.createScriptProcessor(4096, 1, 1);
         processorRef.current = processor;
+
+        // Mute gain node to prevent audio feedback/echo to user's speakers
+        const zeroGain = audioCtx.createGain();
+        zeroGain.gain.value = 0;
+        gainNodeRef.current = zeroGain;
 
         processor.onaudioprocess = (e) => {
           if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) return;
 
           const inputData = e.inputBuffer.getChannelData(0);
-          // Convert 32-bit float PCM [-1.0, 1.0] to 16-bit linear PCM
-          const pcm16 = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            const s = Math.max(-1, Math.min(1, inputData[i]));
-            pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
-          }
+          // Downsample input audio to standard 16kHz Int16 linear PCM
+          const pcm16 = downsampleTo16kHz(inputData, audioCtx.sampleRate);
 
           // Send raw binary PCM audio buffer over WebSocket
-          socketRef.current.send(pcm16.buffer);
+          socketRef.current.send(pcm16.buffer as ArrayBuffer);
         };
 
         source.connect(processor);
-        processor.connect(audioCtx.destination);
+        processor.connect(zeroGain);
+        zeroGain.connect(audioCtx.destination);
       };
 
       socket.onmessage = (event) => {
         try {
           const res = JSON.parse(event.data);
 
+          // Handle server-side errors
+          if (res.error) {
+            console.error('AssemblyAI streaming error:', res.error);
+            options.onError?.(`AssemblyAI error: ${res.error}`);
+            return;
+          }
+
           // AssemblyAI v3 messages format:
           // Partial transcript
-          if (res.message_type === 'PartialTranscript' || res.message_type === 'RealtimeTranscript' && !res.text) {
+          if (res.message_type === 'PartialTranscript' || (res.message_type === 'RealtimeTranscript' && !res.text)) {
             const text = res.text || '';
             setPartialTranscript(text);
             options.onPartialUpdate?.(text);
@@ -131,7 +189,7 @@ export function useLiveTranscription(options: UseLiveTranscriptionOptions = {}) 
                 : finalChunk;
               setFullTranscript(accumulatedRef.current);
               setPartialTranscript('');
-              options.onTranscriptUpdate?.(accumulatedRef.current);
+              options.onTranscriptUpdate?.(accumulatedRef.current, finalChunk);
             }
           }
         } catch {

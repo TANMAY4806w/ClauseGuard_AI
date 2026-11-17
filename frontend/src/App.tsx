@@ -79,6 +79,13 @@ export function App() {
 
       const uploadRes = await apiClient.uploadContract(file, context);
       setDocId(uploadRes.doc_id);
+
+      // If document was already analyzed and cached in Redis, load instantly
+      if (uploadRes.status === 'COMPLETED') {
+        const report = await apiClient.getAnalysis(uploadRes.doc_id);
+        setAnalysis(report);
+        setIsUploading(false);
+      }
     } catch (err) {
       console.error('Upload failed:', err);
       setIsUploading(false);

@@ -8,34 +8,59 @@ ClauseGuard AI is engineered as a decoupled, multi-container microservice system
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer["1. Client & Ingestion Layer"]
-        User["Client / Swagger / FrontEnd"] -->|POST /contracts/upload| API["FastAPI Gateway (Uvicorn)"]
+    subgraph ClientLayer["1. Client Layer (React 18 + Vite + Tailwind CSS v4)"]
+        Browser["User Browser (Split / Tabbed)"]
+        Mic["Microphone (AudioContext 16kHz PCM Stream)"]
+        CopilotUI["Legal Counsel Copilot Chat Panel"]
+        AuditUI["Executive Risk Dashboard (SVG 0-100 Gauge)"]
     end
 
-    subgraph ProcessingLayer["2. Asynchronous Ingestion & Storage"]
-        API -->|Enqueue Job| Worker["Background Processing Worker"]
-        API <-->|Check / Set Cache| Redis["Redis Cache & State Store"]
-        Worker -->|Extract Text & Meta| Parser["PyMuPDF Semantic Clause Parser"]
-        Parser -->|Dense Embeddings| Embedder["BGE-Small-en-v1.5 Embedder"]
-        Parser -->|Sparse BM25 Index| BM25["BM25 Keyword Indexer"]
-        Embedder -->|Payload & Vectors| Qdrant["Qdrant Vector Database"]
-        BM25 -->|Sparse Tokens| Qdrant
+    subgraph StreamingLayer["2. Live Voice Streaming (AssemblyAI v3)"]
+        TokenAPI["FastAPI Voice Token Minter (/api/v1/voice/token)"]
+        AssemblyWS["AssemblyAI v3 WebSocket (wss://streaming.assemblyai.com/v3/ws)"]
     end
 
-    subgraph AgenticLayer["3. LangGraph & Tool Calling Engine"]
-        Worker -->|Trigger Audit| Orchestrator["LangGraph Supervisor Agent"]
-        Orchestrator <-->|Hybrid Query| Qdrant
-        Orchestrator -->|Rank Top-k Chunks| Reranker["FlashRank Cross-Encoder"]
-        Orchestrator <-->|Protocol Tool Call| MCPServer["Custom MCP Server (Predatory Rules)"]
-        Orchestrator <-->|Inference & Formatting| LLM["Gemini 1.5 Flash / OpenRouter"]
+    subgraph BackendGateway["3. FastAPI Gateway (Port 8000)"]
+        UploadAPI["POST /api/v1/contracts/upload (PDF + Context)"]
+        StatusAPI["GET /api/v1/contracts/{id}/status (Polling)"]
+        AnalysisAPI["GET /api/v1/contracts/{id}/analysis (Audit Report)"]
+        ChatAPI["POST /api/v1/contracts/{id}/chat (Counsel Copilot)"]
+        RedisCache["Redis Cache & State Store"]
     end
 
-    subgraph OutputLayer["4. Validation & Delivery"]
-        Orchestrator -->|Verify Citations| Verifier["Reflection & Citation Validator"]
-        Verifier -->|Valid Schema| DB["PostgreSQL Audit Log"]
-        Verifier -->|Cache Final Report| Redis
-        API -->|GET /contracts/{id}/analysis| User
+    subgraph ProcessingPipeline["4. Ingestion & Vector Retrieval"]
+        PyMuPDF["PyMuPDF Clause Parser"]
+        Qdrant["Qdrant Vector DB (Dense BGE + Sparse BM25)"]
+        FlashRank["FlashRank Cross-Encoder (<18ms)"]
     end
+
+    subgraph AgenticLayer["5. LangGraph & Multi-Provider LLM Fallback"]
+        Supervisor["LangGraph Supervisor Agent"]
+        MCPServer["MCP Tool Server (15+ Predatory Rules)"]
+        Reflection["Self-Reflection Citation Verifier"]
+        LLM["Multi-Provider LLM (Groq -> Gemini -> OpenRouter -> Rulebase)"]
+    end
+
+    Mic -->|Request Token| TokenAPI
+    TokenAPI -->|Return 300s Temp Token| Mic
+    Mic -->|Binary 16kHz PCM Audio Stream| AssemblyWS
+    AssemblyWS -->|Real-Time Text Transcripts| Browser
+
+    Browser -->|Upload PDF + Context| UploadAPI
+    UploadAPI --> PyMuPDF
+    PyMuPDF --> Qdrant
+    Qdrant --> FlashRank
+    FlashRank --> Supervisor
+    Supervisor <--> MCPServer
+    Supervisor <--> LLM
+    Supervisor --> Reflection
+    Reflection --> RedisCache
+    Browser <--> AnalysisAPI
+
+    CopilotUI -->|Ask Question / Advice| ChatAPI
+    ChatAPI <--> Qdrant
+    ChatAPI <--> LLM
+    ChatAPI --> CopilotUI
 ```
 
 ---

@@ -33,7 +33,9 @@ Full legal review by corporate lawyers is cost-prohibitive (costing ₹10,000 to
 1. *As a user, I want to upload a 10–50 page PDF contract so that I can receive a complete risk breakdown within 15–30 seconds.*
 2. *As a user, I want each flagged risk to cite the exact section and page number so that I can verify it myself in the physical document.*
 3. *As a user, I want plain-English explanations and counter-negotiation language so that I can request fair modifications from the counterparty.*
-4. *As a developer, I want a standardized REST API and Model Context Protocol (MCP) interface so that ClauseGuard AI can be integrated into automated document workflows.*
+4. *As a user, I want to dictate my personal situation or concerns via live microphone so that the audit incorporates my bargaining leverage.*
+5. *As a user, I want an interactive conversational counsel copilot to ask follow-up questions, discuss compromises, and generate ready-to-copy negotiation emails.*
+6. *As a developer, I want a standardized REST API and Model Context Protocol (MCP) interface so that ClauseGuard AI can be integrated into automated document workflows.*
 
 ---
 
@@ -46,6 +48,10 @@ Full legal review by corporate lawyers is cost-prohibitive (costing ₹10,000 to
 * **Cross-Encoder Reranking:** FlashRank reranking to isolate the top-k most relevant contract clauses.
 * **Agentic Risk Audit via MCP:** Autonomous agent invoking custom Model Context Protocol (MCP) tools to evaluate 15+ standardized predatory legal patterns.
 * **Self-Reflection & Citation Verification:** Internal validation loop cross-checking extracted quotes against the raw document to ensure 100% citation accuracy.
+* **Statutory Grounding under Indian Law:** Precedents and statutory guidance based on the **Indian Contract Act, 1872** (Section 27 non-compete voidness, Section 73/74 damages, Section 124 indemnity).
+* **Live Audio Streaming Transcription:** Real-time speech-to-text via **AssemblyAI v3 WebSocket** (`wss://streaming.assemblyai.com/v3/ws`) for hands-free voice notes and chat.
+* **Interactive Legal Counsel Copilot (Chatbot):** Full conversational assistant powered by RAG contract grounding and multi-provider LLM fallback.
+* **Executive Responsive Dashboard:** Built with **React 18 + TypeScript + Tailwind CSS v4**, supporting laptop split-screen and mobile tabbed layouts with circular SVG risk gauges.
 * **FastAPI Backend:** Asynchronous endpoints with JWT authentication and Redis caching for sub-10ms response on cached queries.
 * **Empirical Ragas Evaluation:** Continuous quality benchmarking verifying Faithfulness $\ge 0.90$ and Context Precision $\ge 0.88$.
 

@@ -39,6 +39,7 @@ def execute_contract_audit_pipeline(
     doc_id: str,
     doc_hash: str,
     cache: CacheService,
+    client_context: Optional[str] = None,
 ) -> None:
     """
     Asynchronous background pipeline executing Ingestion -> Qdrant -> LangGraph Audit -> Reflection -> Redis Cache.
@@ -105,6 +106,8 @@ def execute_contract_audit_pipeline(
                 },
             })
         report["findings"] = formatted_findings
+        if client_context:
+            report["client_context"] = client_context
 
         # Step 5: Save in Redis Cache
         cache.set_job_result(doc_id, report)
@@ -221,6 +224,7 @@ async def upload_contract(
         doc_id=doc_id,
         doc_hash=doc_hash,
         cache=cache,
+        client_context=client_context,
     )
 
     return UploadResponse(
@@ -317,7 +321,7 @@ async def chat_with_legal_counsel(
         retrieved_clauses=retrieved,
         client_question=req.message,
         history=history_dicts,
-        client_context=req.client_context,
+        client_context=req.client_context or report.get("client_context"),
     )
 
     return ContractChatResponse(

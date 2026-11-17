@@ -29,12 +29,12 @@ jobs:
       - name: Copy Example Environment
         run: cp .env.example .env
 
-      - name: Run Full Test Suite (24 Tests)
+      - name: Run Full Test Suite (29 Tests)
         run: |
           python -m pytest tests/ -v --durations=10
 
   evaluate:
-    name: Ragas Benchmark Quality Gates
+    name: Legal Benchmark Quality Gates (Ragas & LLM)
     runs-on: ubuntu-latest
     needs: test
 
@@ -59,3 +59,7 @@ jobs:
       - name: Execute 35-Case Ragas Benchmark
         run: |
           python evaluation/run_ragas_eval.py
+
+      - name: Execute LLM Statutory Quality Benchmark
+        run: |
+          python evaluation/run_llm_eval.py

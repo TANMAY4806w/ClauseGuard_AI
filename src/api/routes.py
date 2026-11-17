@@ -146,7 +146,7 @@ async def get_voice_streaming_token():
         return VoiceTokenResponse(
             token="mock_voice_token_demo_streaming",
             expires_in_seconds=300,
-            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&format_turns=true",
         )
 
     url = "https://streaming.assemblyai.com/v3/token?expires_in_seconds=300"
@@ -157,7 +157,7 @@ async def get_voice_streaming_token():
             return VoiceTokenResponse(
                 token=data["token"],
                 expires_in_seconds=data.get("expires_in_seconds", 300),
-                websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+                websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&format_turns=true",
             )
     except Exception as e:
         logger.error(f"Failed to mint AssemblyAI streaming token: {e}")
@@ -165,7 +165,7 @@ async def get_voice_streaming_token():
         return VoiceTokenResponse(
             token="fallback_voice_token",
             expires_in_seconds=300,
-            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000",
+            websocket_url="wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&format_turns=true",
         )
 
 

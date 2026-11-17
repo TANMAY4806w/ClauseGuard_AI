@@ -1,9 +1,9 @@
 {
-  "evaluation_timestamp": "2026-11-17T19:27:04Z",
+  "evaluation_timestamp": "2026-11-17T19:53:42Z",
   "metrics": {
-    "statutory_alignment_score": 0.905,
+    "statutory_alignment_score": 0.935,
     "schema_conformance_rate": 1.0,
-    "average_latency_ms": 1659.83,
+    "average_latency_ms": 1227.51,
     "circuit_breaker_groq_to_gemini": true,
     "blackout_deterministic_fallback": true
   },
@@ -18,41 +18,41 @@
     {
       "category": "TERMINATION",
       "headline": "Strict 90-Day Auto-Renewal Trap",
-      "latency_ms": 906.2,
-      "statutory_note": "While not strictly void under Section 23, the 90-day notice requirement creates a significant imbalance in bargaining power that may be challenged as unconscionable or contrary to public policy if it effectively prevents the customer from exiting due to the vendor's failure to provide adequate reminders, potentially violating the principle of good faith implied in commercial contracts.",
-      "negotiation_advice": "Negotiate to reduce the notice period to 30 days and insert a mutual termination for convenience clause, or at minimum, require the vendor to send a written renewal reminder 120 days before expiration to ensure the customer has a reasonable opportunity to exercise the non-renewal right.",
-      "statutory_alignment_score": 0.75
+      "latency_ms": 675.53,
+      "statutory_note": "While Section 27 of the Indian Contract Act, 1872, does not automatically invalidate auto-renewal clauses, the strict 90-day notice requirement creates a significant risk of unconscionability and may be challenged as a penalty under Section 74 if it disproportionately restricts the customer's right to exit compared to the vendor's obligations. The clause effectively removes the customer's ability to terminate for convenience, potentially violating the principle of good faith and fair dealing inherent in commercial contracts under Indian law.",
+      "negotiation_advice": "Propose a mutual termination right with 30 days' notice for either party, or alternatively, reduce the non-renewal notice period to 30 days and include a 'material breach' or 'insolvency' trigger that allows immediate termination without penalty. Emphasize that a balanced exit mechanism is standard in enterprise agreements and necessary to avoid future disputes over unconscionable terms.",
+      "statutory_alignment_score": 1.0
     },
     {
       "category": "INDEMNITY",
       "headline": "Uncapped Asymmetric Indemnification",
-      "latency_ms": 768.31,
-      "statutory_note": "The clause's 'without limitation' language likely constitutes an unreasonable restraint of trade under Section 27 of the Indian Contract Act, 1872, as it imposes an open-ended liability that is not proportionate to the consideration received. Furthermore, the absence of a cap renders the indemnity potentially unenforceable as a penalty under Section 74, which mandates that compensation be limited to actual loss or damage caused, thereby violating the statutory principle of commercial fairness.",
-      "negotiation_advice": "Reject the unilateral, uncapped structure and propose a mutual indemnity clause where both parties are liable only for their own negligence or willful misconduct, with total aggregate liability strictly capped at the fees paid in the preceding twelve months. Emphasize that this cap aligns with standard risk allocation practices and ensures the indemnity remains a valid liquidated damages mechanism rather than an unenforceable penalty.",
+      "latency_ms": 768.05,
+      "statutory_note": "The clause's 'without limitation' language likely constitutes an unreasonable restraint of trade under Section 27 of the Indian Contract Act, 1872, as it imposes an infinite liability that is not proportionate to the consideration received. Furthermore, the absence of a cap renders the indemnity potentially unenforceable as a penalty under Section 74, which mandates that compensation be limited to actual loss or damage caused, thereby violating the statutory principle of commercial fairness.",
+      "negotiation_advice": "Reject the unilateral, uncapped structure and propose a mutual indemnification clause where both parties are liable only for their own negligence or willful misconduct. Strictly cap the aggregate liability for indemnification claims at the total fees paid by the Customer to the Vendor in the preceding twelve months to align the risk exposure with the commercial value of the contract.",
       "statutory_alignment_score": 0.875
     },
     {
       "category": "IP",
       "headline": "Post-Termination Non-Compete Lockout",
-      "latency_ms": 2246.45,
-      "statutory_note": "Under Section 27 of the Indian Contract Act, any agreement that restrains a person from exercising a lawful profession, trade or business is void, and Section 28 reiterates that post\u2011termination non\u2011compete clauses are unenforceable unless they fall within narrow statutory exceptions. A 24\u2011month, nationwide restriction is therefore contrary to commercial fairness and statutory public policy and will be held void.",
-      "negotiation_advice": "Seek to replace the blanket ban with a narrowly tailored restriction\u2014e.g., a six\u2011month, region\u2011specific non\u2011solicitation clause tied to a garden\u2011leave payment\u2014to increase enforceability while protecting legitimate business interests.",
-      "statutory_alignment_score": 0.95
+      "latency_ms": 1670.51,
+      "statutory_note": "Under Section 27 of the Indian Contract Act, any agreement that restrains a person from exercising a lawful profession, trade or business is void, and a 24\u2011month blanket non\u2011compete across the entire country is a classic restraint of trade. Moreover, Section 23 requires consideration to be lawful, which is absent here, rendering the clause unenforceable and contrary to public policy on commercial fairness.",
+      "negotiation_advice": "Seek to replace the clause with a narrowly tailored garden\u2011leave or non\u2011solicitation provision limited to six months, specific functions and a reasonable geographic scope, or tie any restriction to a genuine protectable interest such as confidential information.",
+      "statutory_alignment_score": 1.0
     },
     {
       "category": "LIABILITY",
       "headline": "Arbitrary Liquidated Damages Penalty",
-      "latency_ms": 2414.48,
-      "statutory_note": "Under Section 74 of the Indian Contract Act, liquidated damages are enforceable only if they represent a genuine pre\u2011estimate of loss; a fixed $250,000 penalty irrespective of actual harm is treated as a penalty and is void as contrary to the Act's public policy of commercial fairness. Moreover, such a disproportionate clause may be struck down as an unconscionable term under the principles of equity embedded in the Act, rendering it unenforceable.",
-      "negotiation_advice": "Seek to replace the clause with a liquidated damages provision that caps recovery at the proven direct loss, or at a reasonable percentage (e.g., 10\u201115%) of the contract value, and include a mechanism for mutual verification of loss before payment.",
-      "statutory_alignment_score": 0.95
+      "latency_ms": 1792.41,
+      "statutory_note": "Under Section 74 of the Indian Contract Act, 1872, liquidated damages must be a genuine pre-estimate of loss and not a penalty; a fixed $250,000 irrespective of actual harm is likely to be deemed unreasonable and unenforceable. Moreover, such a clause may be viewed as an unfair contract term under the principles of commercial fairness, rendering it void or voidable under Section 23. ",
+      "negotiation_advice": "Propose a liquidated damages provision tied to a reasonable percentage of the contract value or a formula based on actual loss, with a cap equal to the total contract price, and request that any claim be subject to proof of direct damages.",
+      "statutory_alignment_score": 0.8
     },
     {
       "category": "JURISDICTION",
       "headline": "Exclusive Foreign Jurisdiction and Domestic Court Ouster",
-      "latency_ms": 1963.72,
-      "statutory_note": "Clause that waives the right to institute proceedings in Indian courts is a restraint of legal proceedings and is void under Section 27 of the Indian Contract Act, 1872. Moreover, Section 23 declares any agreement opposed to public policy as void, and denying access to domestic courts contravenes Indian public policy. Consequently, such a foreign\u2011only jurisdiction clause is likely unenforceable in India.",
-      "negotiation_advice": "Seek a balanced jurisdiction clause that retains Indian law as governing law and permits Indian courts as a fallback, while agreeing to neutral arbitration (e.g., ICC or SIAC) for substantive disputes. Propose a hybrid approach: arbitration seated abroad with enforceable awards in India, and retain the right to approach Indian courts for interim relief. This protects the client's access to local remedies while offering the vendor a neutral forum.",
+      "latency_ms": 1231.06,
+      "statutory_note": "Under Section 27 of the Indian Contract Act, 1872, any agreement that restrains a party from instituting legal proceedings against the other is void; an exclusive foreign jurisdiction clause that waives the right to approach Indian courts is therefore unenforceable in India. Moreover, Section 23 renders agreements void if they are opposed to public policy, and denying access to domestic remedies can be viewed as contrary to public policy. Consequently, the clause may be struck down as a prohibited restraint of legal rights. The provision thus lacks statutory validity under Indian law.",
+      "negotiation_advice": "Propose a hybrid jurisdiction clause: retain Cayman law for substantive matters but include a mandatory arbitration clause seated in India with the option to enforce awards in Indian courts, or alternatively, allow concurrent jurisdiction of Indian courts for injunctive relief. Emphasize that this balances the supplier's preference for Cayman law while preserving the client's right to local judicial recourse, making the agreement commercially fair and legally enforceable.",
       "statutory_alignment_score": 1.0
     }
   ]

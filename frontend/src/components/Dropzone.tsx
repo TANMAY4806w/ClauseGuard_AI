@@ -49,13 +49,20 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
     isRecording,
     isConnecting,
     partialTranscript,
+    audioLevel,
     startRecording,
     stopRecording,
     resetTranscript,
   } = useLiveTranscription({
+    onPartialUpdate: (partial) => {
+      const base = baseContextRef.current.trim();
+      setClientContext(base ? `${base} ${partial}` : partial);
+    },
     onTranscriptUpdate: (fullText) => {
       const base = baseContextRef.current.trim();
-      setClientContext(base ? `${base} ${fullText}` : fullText);
+      const updated = base ? `${base} ${fullText}` : fullText;
+      setClientContext(updated);
+      baseContextRef.current = updated;
     },
     onError: (err) => {
       setErrorMessage(`Microphone streaming error: ${err}`);
@@ -341,18 +348,39 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
                   <div className="flex items-center justify-between text-xs text-rose-300 font-mono">
                     <div className="flex items-center space-x-2">
                       <div className="flex items-end space-x-1 h-5">
-                        <span className="w-1 bg-rose-500 rounded-full animate-eq-1" />
-                        <span className="w-1 bg-rose-500 rounded-full animate-eq-2" />
-                        <span className="w-1 bg-rose-500 rounded-full animate-eq-3" />
-                        <span className="w-1 bg-rose-500 rounded-full animate-eq-4" />
+                        <span
+                          className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                          style={{ height: `${Math.max(4, Math.min(20, 4 + audioLevel * 0.4))}px` }}
+                        />
+                        <span
+                          className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                          style={{ height: `${Math.max(6, Math.min(20, 6 + audioLevel * 0.7))}px` }}
+                        />
+                        <span
+                          className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                          style={{ height: `${Math.max(8, Math.min(20, 8 + audioLevel * 0.9))}px` }}
+                        />
+                        <span
+                          className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                          style={{ height: `${Math.max(5, Math.min(20, 5 + audioLevel * 0.5))}px` }}
+                        />
                       </div>
                       <span className="font-semibold">AssemblyAI v3 Streaming...</span>
                     </div>
-                    <span className="text-[10px] uppercase tracking-wider text-rose-400 font-bold">LIVE PCM</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="inline-block h-2 w-2 rounded-full bg-rose-400 animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-wider text-rose-400 font-bold">
+                        {audioLevel > 5 ? 'AUDIO DETECTED' : 'LIVE PCM'}
+                      </span>
+                    </div>
                   </div>
-                  {partialTranscript && (
+                  {partialTranscript ? (
                     <p className="text-xs italic text-rose-200 pl-6 leading-relaxed">
                       &ldquo;{partialTranscript}&rdquo;
+                    </p>
+                  ) : (
+                    <p className="text-xs text-rose-300/60 pl-6 font-mono">
+                      Speak now — streaming 16kHz PCM frames in real-time...
                     </p>
                   )}
                 </div>

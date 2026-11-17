@@ -53,13 +53,20 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
     isRecording,
     isConnecting,
     partialTranscript,
+    audioLevel,
     startRecording,
     stopRecording,
     resetTranscript,
   } = useLiveTranscription({
+    onPartialUpdate: (partial) => {
+      const base = baseInputRef.current.trim();
+      setInputText(base ? `${base} ${partial}` : partial);
+    },
     onTranscriptUpdate: (fullText) => {
       const base = baseInputRef.current.trim();
-      setInputText(base ? `${base} ${fullText}` : fullText);
+      const updated = base ? `${base} ${fullText}` : fullText;
+      setInputText(updated);
+      baseInputRef.current = updated;
     },
   });
 
@@ -269,6 +276,34 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
               {item}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Live Voice Recording Status Banner */}
+      {isRecording && (
+        <div className="px-4 py-2 bg-rose-500/[0.08] border-t border-rose-500/20 flex items-center justify-between text-xs text-rose-300 font-mono">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-end space-x-1 h-4">
+              <span
+                className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                style={{ height: `${Math.max(3, Math.min(16, 3 + audioLevel * 0.4))}px` }}
+              />
+              <span
+                className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                style={{ height: `${Math.max(4, Math.min(16, 4 + audioLevel * 0.7))}px` }}
+              />
+              <span
+                className="w-1 bg-rose-500 rounded-full transition-all duration-75"
+                style={{ height: `${Math.max(5, Math.min(16, 5 + audioLevel * 0.9))}px` }}
+              />
+            </div>
+            <span className="text-[11px] font-semibold truncate max-w-[280px]">
+              {partialTranscript ? `"${partialTranscript}"` : 'Listening... Speak your legal query'}
+            </span>
+          </div>
+          <span className="text-[9px] uppercase tracking-wider text-rose-400 font-bold shrink-0">
+            {audioLevel > 5 ? 'AUDIO' : 'LIVE'}
+          </span>
         </div>
       )}
 

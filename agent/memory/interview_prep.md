@@ -98,3 +98,20 @@
 - **Context Recall:** Did we find all the evidence? (E.g. If an agreement has two clauses detailing an auto-renewal penalty and we only retrieved one, recall drops).
 - **Context Precision:** Is the most relevant evidence ranked at rank #1 or #2? (Even if recall is high, if the critical clause is buried at rank #15, the LLM may suffer from the *Lost-in-the-Middle* problem and ignore it).
 - **Our Architecture:** FastEmbed vector retrieval ensures high **Context Recall** (1.000), while FlashRank cross-encoder reranking guarantees high **Context Precision** (1.000) by elevating the most relevant clause to the top rank.
+
+### Q16: "Why use a Multi-Stage Dockerfile and an unprivileged user for your AI microservice?"
+- **Image Size & Security Optimization:** Single-stage Docker builds leave behind build toolchains (`gcc`, `g++`, header files, temporary pip build artifacts), bloating the image to $>2\text{GB}$ and introducing vulnerabilities.
+- **Our Multi-Stage Design:** In `Dockerfile`, Stage 1 (`builder`) installs and compiles dependencies into `/install`. Stage 2 (`runner`) copies only the compiled runtime packages and application code.
+- **Non-Root Security:** We create a dedicated system group and user (`clauseguard:clauseguard`, UID 1001). Running containers as non-root mitigates container breakout vulnerabilities in Kubernetes or ECS clusters.
+
+### Q17: "How does Docker Compose guarantee startup order without race conditions?"
+- **The Problem:** Standard `depends_on: [qdrant, redis]` only waits for the container process to *start*, not for Qdrant or Redis to finish binding their network ports and loading storage. The FastAPI app starts prematurely and crashes with `ConnectionRefusedError`.
+- **Our Engineering Choice:** In `docker-compose.yml`, we define explicit `healthcheck` blocks (`curl -f http://localhost:6333/healthz` for Qdrant and `redis-cli ping` for Redis) and configure:
+  ```yaml
+  depends_on:
+    qdrant:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  ```
+  This guarantees that the FastAPI application only boots after both databases report fully healthy.

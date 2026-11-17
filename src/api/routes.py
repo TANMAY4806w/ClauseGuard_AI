@@ -89,6 +89,8 @@ def execute_contract_audit_pipeline(
                 "headline": item.get("headline", ""),
                 "danger_summary": item.get("danger_summary", ""),
                 "recommended_counter_term": item.get("recommended_counter_term", ""),
+                "statutory_compliance_note": item.get("statutory_compliance_note"),
+                "negotiation_advice": item.get("negotiation_advice"),
                 "citation": {
                     "section": citation_raw.get("section_number", "General"),
                     "page": citation_raw.get("page_number", 1),

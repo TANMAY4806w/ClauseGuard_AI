@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 
 from src.agent.state import ClauseGuardState, ClauseCitation, FlaggedRisk
 from src.agent.mcp_server import MCPServer
+from src.agent.llm_client import MultiProviderLLMClient
 from src.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -61,8 +62,10 @@ def create_retrieve_node(mcp_server: MCPServer):
     return retrieve_and_rerank_node
 
 
-def create_audit_node(mcp_server: MCPServer):
-    """Factory creating Node 3: Audit chunks against MCP predatory rulebase."""
+def create_audit_node(mcp_server: MCPServer, llm_client: Optional[MultiProviderLLMClient] = None):
+    """Factory creating Node 3: Audit chunks against MCP predatory rulebase and enrich via LLM."""
+    client = llm_client or MultiProviderLLMClient()
+
     def audit_node(state: ClauseGuardState) -> Dict[str, Any]:
         preliminary_risks: List[Dict[str, Any]] = []
         risk_counter = 1
@@ -76,6 +79,15 @@ def create_audit_node(mcp_server: MCPServer):
             # Execute MCP rulebase pattern matching
             findings = mcp_server.audit_predatory_terms(raw_text, category=category)
             for f in findings:
+                # Enrich with statutory Indian Contract Act context & negotiation strategy
+                enriched = client.enrich_risk_with_legal_context(
+                    category=f["category"],
+                    verbatim_quote=f["matched_quote"],
+                    headline=f["headline"],
+                    danger_summary=f["danger_summary"],
+                    counter_term=f["recommended_counter_term"],
+                )
+
                 risk_item = {
                     "risk_id": f"RISK_{risk_counter:03d}",
                     "category": f["category"],
@@ -83,6 +95,8 @@ def create_audit_node(mcp_server: MCPServer):
                     "headline": f["headline"],
                     "danger_summary": f["danger_summary"],
                     "recommended_counter_term": f["recommended_counter_term"],
+                    "statutory_compliance_note": enriched.get("statutory_compliance_note"),
+                    "negotiation_advice": enriched.get("negotiation_advice"),
                     "citation": {
                         "section_number": section_number,
                         "page_number": page_number,
@@ -213,16 +227,20 @@ def create_finalize_node():
     return finalize_node
 
 
-def build_clauseguard_graph(mcp_server: Optional[MCPServer] = None) -> StateGraph:
+def build_clauseguard_graph(
+    mcp_server: Optional[MCPServer] = None,
+    llm_client: Optional[MultiProviderLLMClient] = None,
+) -> StateGraph:
     """Build and compile the LangGraph StateGraph agent."""
     server = mcp_server or MCPServer()
+    client = llm_client or MultiProviderLLMClient()
 
     workflow = StateGraph(ClauseGuardState)
 
     # Register nodes
     workflow.add_node("plan", create_plan_node)
     workflow.add_node("retrieve", create_retrieve_node(server))
-    workflow.add_node("audit", create_audit_node(server))
+    workflow.add_node("audit", create_audit_node(server, client))
     workflow.add_node("reflection", create_reflection_node(server))
     workflow.add_node("retry", create_retry_node())
     workflow.add_node("finalize", create_finalize_node())

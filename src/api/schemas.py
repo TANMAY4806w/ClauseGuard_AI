@@ -27,6 +27,14 @@ class ClauseAuditItem(BaseModel):
     headline: str = Field(..., description="Short risk headline")
     danger_summary: str = Field(..., description="Plain-English explanation of why this clause hurts the user")
     recommended_counter_term: str = Field(..., description="Negotiation script/clause to propose instead")
+    statutory_compliance_note: Optional[str] = Field(
+        default=None,
+        description="Statutory legal context, e.g. Indian Contract Act 1872 provisions or case law",
+    )
+    negotiation_advice: Optional[str] = Field(
+        default=None,
+        description="Strategic counter-proposal advice generated via LLM fallback reasoning",
+    )
     citation: CitationModel = Field(..., description="Exact verifiable source citation")
 
 

@@ -18,6 +18,8 @@ class FlaggedRisk(BaseModel):
     headline: str = Field(..., description="Short risk title, e.g. '90-Day Auto-Renewal Lock-in'")
     plain_english_explanation: str = Field(..., description="Non-lawyer explanation of the hazard")
     recommended_counter_term: str = Field(..., description="Suggested replacement or counter-negotiation clause")
+    statutory_compliance_note: Optional[str] = Field(default=None, description="Statutory legal note under Indian Contract Act or applicable law")
+    negotiation_advice: Optional[str] = Field(default=None, description="Strategic negotiation advice")
     citation: ClauseCitation = Field(..., description="Exact verifiable citation")
     confidence_score: float = Field(default=0.95, ge=0.0, le=1.0, description="Audit confidence score")
 

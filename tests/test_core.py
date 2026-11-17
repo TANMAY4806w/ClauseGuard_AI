@@ -34,11 +34,14 @@ class TestSettings:
             Settings(MAX_UPLOAD_SIZE_MB=500)
 
     def test_has_llm_key_helper(self):
-        s_without = Settings(GEMINI_API_KEY=None, OPENROUTER_API_KEY=None)
+        s_without = Settings(GROQ_API_KEY=None, GEMINI_API_KEY=None, OPENROUTER_API_KEY=None)
         assert s_without.has_llm_key is False
 
-        s_with_gemini = Settings(GEMINI_API_KEY="test_key_123")
+        s_with_gemini = Settings(GROQ_API_KEY=None, GEMINI_API_KEY="test_key_123", OPENROUTER_API_KEY=None)
         assert s_with_gemini.has_llm_key is True
+
+        s_with_groq = Settings(GROQ_API_KEY="gsk_test_123", GEMINI_API_KEY=None, OPENROUTER_API_KEY=None)
+        assert s_with_groq.has_llm_key is True
 
 
 class TestLogger:

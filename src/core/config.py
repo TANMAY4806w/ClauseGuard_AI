@@ -34,10 +34,15 @@ class Settings(BaseSettings):
     )
     ALGORITHM: str = Field(default="HS256", description="JWT hashing algorithm")
 
-    # LLM Providers
+    # LLM Providers (Multi-Provider Fallback: Groq -> Gemini -> OpenRouter)
+    GROQ_API_KEY: Optional[str] = Field(default=None, description="Groq API Key")
     GEMINI_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key")
     OPENROUTER_API_KEY: Optional[str] = Field(default=None, description="OpenRouter API Key")
-    DEFAULT_LLM_MODEL: str = Field(default="gemini-1.5-flash", description="Default model for reasoning")
+    DEFAULT_LLM_PROVIDER: str = Field(default="groq", description="Primary LLM provider")
+    PRIMARY_GROQ_MODEL: str = Field(default="qwen/qwen3.8-27b", description="Primary Groq model")
+    FALLBACK_GROQ_MODEL: str = Field(default="openai/gpt-oss-120b", description="Fallback Groq model")
+    PRIMARY_GEMINI_MODEL: str = Field(default="gemma-4-26b-a4b-it", description="Primary Gemini model")
+    FALLBACK_GEMINI_MODEL: str = Field(default="gemini-flash-latest", description="Fallback Gemini model")
 
     # Vector Database (Qdrant)
     QDRANT_MODE: Literal["local", "server", "memory"] = Field(
@@ -76,7 +81,7 @@ class Settings(BaseSettings):
     @property
     def has_llm_key(self) -> bool:
         """Check if at least one valid LLM provider key is present."""
-        return bool(self.GEMINI_API_KEY or self.OPENROUTER_API_KEY)
+        return bool(self.GROQ_API_KEY or self.GEMINI_API_KEY or self.OPENROUTER_API_KEY)
 
 
 @lru_cache()

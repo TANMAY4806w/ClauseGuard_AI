@@ -16,9 +16,12 @@ services:
       - DEBUG=False
       - API_V1_STR=/api/v1
       - SECRET_KEY=${SECRET_KEY:-prod_super_secret_clauseguard_jwt_key_2026}
+      - GROQ_API_KEY=${GROQ_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - DEFAULT_LLM_MODEL=gemini-1.5-flash
+      - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-groq}
+      - PRIMARY_GROQ_MODEL=${PRIMARY_GROQ_MODEL:-qwen/qwen3.8-27b}
+      - PRIMARY_GEMINI_MODEL=${PRIMARY_GEMINI_MODEL:-gemma-4-26b-a4b-it}
       # Connect to external Qdrant container
       - QDRANT_MODE=server
       - QDRANT_HOST=qdrant

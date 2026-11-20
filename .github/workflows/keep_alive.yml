@@ -15,7 +15,7 @@ jobs:
         env:
           APP_URL: ${{ secrets.BACKEND_URL || secrets.RENDER_URL || secrets.HF_SPACE_HOST }}
         run: |
-          TARGET="${APP_URL:-https://clauseguard-ai-backend.onrender.com}"
+          TARGET="${APP_URL:-https://clauseguard-ai-backend-an5b.onrender.com}"
           # If target does not start with http, prepend https://
           if [[ "$TARGET" != http* ]]; then
             TARGET="https://${TARGET}"

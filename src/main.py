@@ -1,11 +1,14 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 import os
+from sqlalchemy import text
 
 from src.core.config import get_settings
 from src.core.logger import get_logger, setup_logging
-from src.core.database import init_db
+from src.core.database import init_db, get_session_maker
 from src.api.routes import router as api_v1_router
 
 logger = get_logger(__name__)
@@ -52,26 +55,54 @@ def create_application() -> FastAPI:
 
     @app.get("/health", tags=["System"])
     async def health_check():
-        """Health check endpoint for Docker container orchestrators and load balancers."""
+        """
+        Health check endpoint for Docker containers, load balancers, and keep-alive cron.
+        Queries database with 'SELECT 1' to keep Supabase projects continuously active.
+        """
+        db_status = "unconfigured"
+        try:
+            session_factory = get_session_maker()
+            async with session_factory() as session:
+                await session.execute(text("SELECT 1"))
+                db_status = "connected"
+        except Exception as e:
+            db_status = f"error: {str(e)}"
+
         return {
             "status": "healthy",
             "service": settings.PROJECT_NAME,
             "environment": settings.APP_ENV,
+            "database": db_status,
         }
 
+    frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+    index_html = os.path.join(frontend_dist, "index.html")
+    has_frontend = os.path.exists(frontend_dist) and os.path.exists(index_html)
+
+    if has_frontend:
+        assets_dir = os.path.join(frontend_dist, "assets")
+        if os.path.exists(assets_dir):
+            app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
     @app.get("/", tags=["System"])
-    async def root():
-        """Root API information."""
+    async def root(request: Request):
+        """Root API information or React Frontend Single Page Application."""
+        accept = request.headers.get("accept", "")
+        if has_frontend and "text/html" in accept:
+            return FileResponse(index_html)
         return {
             "message": "ClauseGuard AI is operational. Visit /docs for interactive Swagger UI.",
             "docs": "/docs",
         }
 
-    # Mount frontend static distribution if built
-    frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
-    if os.path.exists(frontend_dist) and os.path.exists(os.path.join(frontend_dist, "index.html")):
-        from fastapi.staticfiles import StaticFiles
-        app.mount("/app", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+    if has_frontend:
+        # Fallback SPA handler for React client-side routing
+        @app.get("/{full_path:path}", include_in_schema=False)
+        async def serve_spa(full_path: str):
+            candidate = os.path.join(frontend_dist, full_path)
+            if full_path and os.path.exists(candidate) and os.path.isfile(candidate):
+                return FileResponse(candidate)
+            return FileResponse(index_html)
 
     return app
 

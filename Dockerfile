@@ -38,30 +38,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy python dependencies
 COPY --from=builder /install /usr/local
 
-# Create non-root user
-RUN groupadd -g 1001 clauseguard && \
-    useradd -u 1001 -g clauseguard -s /bin/bash -m clauseguard
+# Create non-root user for Hugging Face Spaces compatibility (UID 1000)
+RUN useradd -m -u 1000 user
 
 # Copy backend source & assets
-COPY --chown=clauseguard:clauseguard src/ ./src/
-COPY --chown=clauseguard:clauseguard data/ ./data/
-COPY --chown=clauseguard:clauseguard evaluation/ ./evaluation/
-COPY --chown=clauseguard:clauseguard tests/ ./tests/
-COPY --chown=clauseguard:clauseguard migrations/ ./migrations/
-COPY --chown=clauseguard:clauseguard .env.example .env
+COPY --chown=user:user src/ ./src/
+COPY --chown=user:user data/ ./data/
+COPY --chown=user:user evaluation/ ./evaluation/
+COPY --chown=user:user tests/ ./tests/
+COPY --chown=user:user migrations/ ./migrations/
+COPY --chown=user:user .env.example .env
 
 # Copy built frontend distribution
-COPY --from=frontend-builder --chown=clauseguard:clauseguard /app/frontend/dist ./frontend/dist
+COPY --from=frontend-builder --chown=user:user /app/frontend/dist ./frontend/dist
 
-# Create storage directories
+# Create storage directories with permissions
 RUN mkdir -p /app/data/raw_uploads /app/qdrant_storage && \
-    chown -R clauseguard:clauseguard /app
+    chown -R user:user /app
 
-USER clauseguard
+USER user
 
-EXPOSE 8000
+EXPOSE 7860
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:7860/health || exit 1
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-7860}"]

@@ -1,3 +1,13 @@
+---
+title: ClauseGuard AI
+emoji: ⚖️
+colorFrom: yellow
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # ClauseGuard AI
 
 > **Autonomous Legal Contract Risk Intelligence Microservice & Real-Time Interactive Counsel Copilot**  

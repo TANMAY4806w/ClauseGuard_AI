@@ -1,0 +1,31 @@
+name: ClauseGuard 24/7 Keep-Alive Uptime Engine
+
+on:
+  schedule:
+    # Run every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Hugging Face & Supabase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Keep-Alive Ping to Health Endpoint
+        env:
+          APP_HOST: ${{ secrets.HF_SPACE_HOST }}
+        run: |
+          TARGET_HOST="${APP_HOST:-tanmay4806w-clauseguard-ai.hf.space}"
+          HEALTH_URL="https://${TARGET_HOST}/health"
+          echo "Sending automated keep-alive ping to $HEALTH_URL..."
+          
+          HTTP_RESPONSE=$(curl -s -o response.json -w "%{http_code}" "$HEALTH_URL" || echo "000")
+          echo "HTTP Status Code: $HTTP_RESPONSE"
+          
+          if [ "$HTTP_RESPONSE" -ge 200 ] && [ "$HTTP_RESPONSE" -lt 400 ]; then
+            echo "Success: Hugging Face Space & Supabase DB kept active."
+            cat response.json
+          else
+            echo "Warning: Endpoint returned $HTTP_RESPONSE. Attempting fallback wake-up..."
+            curl -s "$HEALTH_URL" || true
+          fi

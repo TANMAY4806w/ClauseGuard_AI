@@ -154,3 +154,17 @@ sequenceDiagram
         API-->>User: 200 OK {status: "COMPLETED", report: {...}}
     end
 ```
+
+---
+
+## 5. Live Production Cloud Topology & Zero-Cost Serverless Deployment
+
+In live production, ClauseGuard AI runs across a decoupled, zero-cost cloud architecture:
+
+| Component | Provider & URL | Infrastructure Specification |
+| :--- | :--- | :--- |
+| **Frontend SPA** | [Vercel](https://clause-guard-ai-woad.vercel.app/) | Global Edge CDN, sub-300ms initial load, automatic SPA rewrites |
+| **Backend API** | [Render](https://clauseguard-ai-backend-an5b.onrender.com) | Python 3.11 asynchronous web service running Uvicorn + FastAPI |
+| **Database** | [Supabase](https://supabase.com) | PostgreSQL cloud cluster with Supavisor IPv4 session pooling (Port 5432) |
+| **Voice STT** | AssemblyAI v3 | Real-time WebSocket streaming (`wss://streaming.assemblyai.com/v3/ws`) |
+| **Keep-Alive Engine**| GitHub Actions | Automated 6-hour cron (`keep_alive.yml`) pinging `/health` to maintain 100% uptime |

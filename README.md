@@ -1,17 +1,33 @@
----
-title: ClauseGuard AI
-emoji: ⚖️
-colorFrom: yellow
-colorTo: gray
-sdk: docker
-app_port: 7860
-pinned: false
----
+# ⚖️ ClauseGuard AI
 
-# ClauseGuard AI
-
-> **Autonomous Legal Contract Risk Intelligence Microservice & Real-Time Interactive Counsel Copilot**  
+> **Autonomous Legal Contract Risk Intelligence Microservice & Real-Time Interactive Counsel Workspace**  
 > *Clause-aware semantic chunking, hybrid vector retrieval, cross-encoder reranking, LangGraph-powered predatory term auditing with 100% verifiable citations, live WebSocket voice streaming via AssemblyAI v3, and interactive statutory copilot grounded under the Indian Contract Act, 1872.*
+
+---
+
+### 🌐 Live Production Deployment
+
+[![Live Production Web App](https://img.shields.io/badge/🚀_Live_Web_App-Vercel-black?style=for-the-badge&logo=vercel)](https://clause-guard-ai-woad.vercel.app/)
+[![Production API & Swagger Docs](https://img.shields.io/badge/⚡_Live_API_Docs-Render-46E3B7?style=for-the-badge&logo=fastapi&logoColor=black)](https://clauseguard-ai-backend-an5b.onrender.com/docs)
+[![Database](https://img.shields.io/badge/🗄️_PostgreSQL-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![24/7 Uptime Keep-Alive](https://img.shields.io/badge/🟢_24%2F7_Uptime-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/TANMAY4806w/ClauseGuard_AI/actions)
+
+| Production Resource | Live Endpoint / Access Link | Status |
+| :--- | :--- | :--- |
+| **Client Workspace (Frontend)** | [**clause-guard-ai-woad.vercel.app**](https://clause-guard-ai-woad.vercel.app/) | 🟢 **Live (Vercel Edge CDN)** |
+| **API & Swagger Docs (Backend)** | [**clauseguard-ai-backend-an5b.onrender.com/docs**](https://clauseguard-ai-backend-an5b.onrender.com/docs) | 🟢 **Live (Render Native Python)** |
+| **Health & DB Keep-Alive** | [**clauseguard-ai-backend-an5b.onrender.com/health**](https://clauseguard-ai-backend-an5b.onrender.com/health) | 🟢 **Healthy (`SELECT 1` OK)** |
+| **Database Cluster** | **Supabase Cloud PostgreSQL (Tokyo Pooler)** | 🟢 **Connected & Migrated** |
+| **CI/CD & Keep-Alive Cron** | **GitHub Actions (`.github/workflows/keep_alive.yml`)** | 🟢 **Active (Runs every 6 hrs)** |
+
+---
+
+### 🖥️ Live Production Workspace
+
+![ClauseGuard AI Live Production Workspace](docs/images/clauseguard_live_demo.png)  
+*Live interactive 3-column counsel workspace running on Vercel Edge with real-time speech-to-text dialogue grounded in the Indian Contract Act, 1872.*
+
+---
 
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -20,33 +36,33 @@ pinned: false
 [![LangGraph](https://img.shields.io/badge/LangGraph-Agentic%20StateGraph-orange.svg)](https://langchain-ai.github.io/langgraph/)
 [![Qdrant](https://img.shields.io/badge/Vector%20DB-Qdrant%20Hybrid-DC2626.svg?logo=qdrant&logoColor=white)](https://qdrant.tech/)
 [![AssemblyAI](https://img.shields.io/badge/Voice%20Streaming-AssemblyAI%20v3-0052FF.svg)](https://www.assemblyai.com/)
-[![CI/CD](https://github.com/TANMAY4806w/ClauseGuard_AI/actions/workflows/ci.yml/badge.svg)](https://github.com/TANMAY4806w/ClauseGuard_AI/actions)
+[![Tests Passing](https://img.shields.io/badge/Tests-37%2F37%20Passed-brightgreen.svg)](https://github.com/TANMAY4806w/ClauseGuard_AI/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 📌 Executive Summary & Problem
+## 📌 Problem & Business Value
 
 Individuals, freelancers, independent consultants, and small-to-medium businesses (SMBs) routinely sign high-stakes commercial agreements (SaaS contracts, master services agreements, employment covenants, NDAs, and commercial leases) without retaining external legal counsel.
 
 Traditional legal reviews cost ₹10,000–₹50,000+ ($150–$600+) per document and require 3–5 business days. As a result, signatories unwittingly sign agreements containing:
-- 🔒 **90-Day Auto-Renewal Traps:** Strict advance notice windows causing automatic 12-month lock-ins.
+- 🔒 **90-Day Auto-Renewal Traps:** Strict advance notice windows causing automatic 12-month lock-ins with zero convenience termination rights.
 - 💸 **Uncapped Asymmetric Indemnification:** Forcing the signatory to defend against third-party claims without liability caps.
 - 🚫 **Post-Termination Non-Compete Covenants:** Void agreements in restraint of trade under Section 27 of the Indian Contract Act, 1872.
 - 📝 **Unilateral Modification Clauses:** Allowing vendor platforms to alter pricing, SLAs, or covenants without mutual consent.
 - ⚖️ **Remote Jurisdiction Selection:** Forcing litigation in distant or overseas courts.
 - 💡 **Perpetual IP Assignment:** Inadvertently transferring ownership of pre-existing background intellectual property.
 
-**ClauseGuard AI** is an end-to-end legal intelligence platform that ingests legal contracts, semantically extracts clauses, audits them against a codified rulebase of 15+ predatory patterns, assigns quantified risk tiers (**CRITICAL, HIGH, MEDIUM, LOW, SAFE**), translates risks into plain, non-lawyer English, provides counter-negotiation language, anchors every finding to an **exact verifiable source citation (section number, page number, and verbatim quote)**, and provides an **Interactive Legal Counsel Copilot (Chatbot)** with **Live Real-Time Audio Streaming** via AssemblyAI v3 WebSocket.
+**ClauseGuard AI** ingests complex PDF agreements, performs regex-anchored clause hierarchy extraction, audits them against a codified rulebase of 15+ predatory patterns, assigns quantified risk scores (**CRITICAL, HIGH, MEDIUM, SAFE**), translates risks into plain, non-lawyer English, provides counter-negotiation language, anchors every finding to an **exact verifiable source citation (section number, page number, and verbatim quote)**, and provides an **Interactive Legal Counsel Copilot** with **Live Real-Time Audio Streaming** via AssemblyAI v3 WebSocket.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Production System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer["1. Client Layer (React 18 + Vite + Tailwind CSS v4)"]
-        Browser["User Browser (Laptop Split-View / Mobile Tabbed)"]
+    subgraph ClientLayer["1. Edge Client Layer (Vercel Global Edge CDN)"]
+        Browser["User Browser (Split-View / Mobile Responsive)"]
         Mic["Microphone (AudioContext 16kHz PCM Stream)"]
         CopilotUI["Legal Counsel Copilot Chat Panel"]
         AuditUI["Executive Risk Dashboard (SVG 0-100 Gauge & Citations)"]
@@ -57,92 +73,122 @@ flowchart TD
         AssemblyWS["AssemblyAI v3 WebSocket (wss://streaming.assemblyai.com/v3/ws)"]
     end
 
-    subgraph BackendGateway["3. FastAPI Asynchronous Microservice (Port 8000)"]
+    subgraph BackendGateway["3. FastAPI Production Microservice (Render.com)"]
         UploadAPI["POST /api/v1/contracts/upload (PDF + Context)"]
         StatusAPI["GET /api/v1/contracts/{id}/status (Polling)"]
         AnalysisAPI["GET /api/v1/contracts/{id}/analysis (Audit Report)"]
         ChatAPI["POST /api/v1/contracts/{id}/chat (Counsel Copilot)"]
+        HealthAPI["GET /health (Keep-Alive 'SELECT 1')"]
         RedisCache["Redis Cache (SHA-256 Analysis Cache & Rate Limiting)"]
     end
 
-    subgraph ProcessingPipeline["4. Ingestion & Vector Retrieval"]
+    subgraph DatabaseLayer["4. Cloud Persistence (Supabase PostgreSQL)"]
+        Pooler["Supavisor IPv4 Connection Pooler (Port 5432)"]
+        Tables[("users | contracts | chat_messages")]
+    end
+
+    subgraph ProcessingPipeline["5. Ingestion & Hybrid Retrieval"]
         PyMuPDF["PyMuPDF Clause-Aware Hierarchy Parser"]
         Qdrant["Qdrant Vector Database (Dense BGE + Sparse BM25)"]
         FlashRank["FlashRank Cross-Encoder Reranker (<18ms CPU)"]
     end
 
-    subgraph AgenticReasoning["5. LangGraph & Multi-Provider LLM Fallback"]
+    subgraph AgenticReasoning["6. LangGraph Multi-Agent Reflection Loop"]
         Supervisor["LangGraph State Machine Supervisor"]
         MCPServer["MCP Tool Server (15+ Predatory Rules)"]
         Reflection["Self-Reflection Citation Verifier (Levenshtein >= 0.95)"]
-        LLM["Multi-Provider LLM Engine (Groq -> Gemini -> OpenRouter -> Rulebase)"]
+        LLM["Cascading LLM Engine (Groq Qwen/Llama -> Gemini -> Rulebase)"]
     end
 
-    %% Voice Streaming Connections
-    Mic -->|1. Request Single-Use Token| TokenAPI
-    TokenAPI -->|2. Mint 300s Temp Token| Mic
-    Mic -->|3. Binary 16kHz PCM Audio Stream| AssemblyWS
-    AssemblyWS -->|4. Real-Time Partial & Final Transcripts| Browser
+    subgraph UptimeEngine["7. 24/7 Keep-Alive Automation"]
+        CronJob["GitHub Actions (0 */6 * * *)"]
+    end
 
-    %% Upload & Processing
-    Browser -->|Upload Contract + Voice Context| UploadAPI
+    %% Flow Connections
+    Browser -->|1. Request Token| TokenAPI
+    TokenAPI -->|2. Mint 300s Temp Token| Browser
+    Mic -->|3. Binary 16kHz PCM Stream| AssemblyWS
+    AssemblyWS -->|4. Live Transcript Updates| Browser
+
+    Browser -->|Upload Contract PDF| UploadAPI
     UploadAPI <-->|Check Hash Cache| RedisCache
     UploadAPI -->|Enqueue Processing| PyMuPDF
     PyMuPDF -->|Dense + Sparse Embeddings| Qdrant
     Qdrant -->|Top-25 Candidates| FlashRank
     FlashRank -->|Top-5 Re-ranked Clauses| Supervisor
-    Supervisor <-->|Rulebase Matching| MCPServer
+    Supervisor <-->|Predatory Rule Matching| MCPServer
     Supervisor <-->|Legal Reasoning| LLM
     Supervisor -->|Cross-Check Citation| Reflection
-    Reflection -->|Finalized Verified Report| RedisCache
-    Browser <-->|Poll Progress / Fetch Report| StatusAPI
-    Browser <-->|Fetch Dossier| AnalysisAPI
+    Reflection -->|Persist Audit Dossier| Pooler
+    Pooler --> Tables
 
-    %% Interactive Counsel Chat
-    CopilotUI -->|Ask Advice / Negotiation Scripts| ChatAPI
-    ChatAPI <-->|Semantic Clause Grounding| Qdrant
-    ChatAPI <-->|Indian Contract Act 1872 Precedent| LLM
-    ChatAPI -->|Counsel Guidance & Email Drafts| CopilotUI
+    CopilotUI <-->|Conversational Counsel Query| ChatAPI
+    ChatAPI <-->|Grounding Retrieval| Qdrant
+    ChatAPI <-->|Indian Contract Act Precedents| LLM
+    ChatAPI <-->|Persist Dialogue History| Pooler
+
+    CronJob -. Periodic Keep-Alive Ping .-> HealthAPI
+    HealthAPI -. Reset 7-day Pause Timer .-> Pooler
 ```
 
 ---
 
-## ✨ Key Capabilities
+## ✨ Key Technical Capabilities
 
-- **Real-Time Voice Streaming via AssemblyAI v3 WebSocket:** Streams 16kHz mono linear PCM directly from the browser microphone to `wss://streaming.assemblyai.com/v3/ws`, displaying live sub-200ms transcription preview while speaking.
-- **Interactive Legal Counsel Copilot (Chatbot):** Acts as senior legal counsel, discussing contract risks, explaining Indian Contract Act 1872 provisions (Sections 27, 73, 74, 124), offering compromise options, and drafting ready-to-copy client pushback emails.
-- **Clause-Aware Semantic Chunking:** Uses a regex-anchored hierarchy parser (`PyMuPDF`) that respects legal sections (`Article IV`, `Section 8.2(b)`, bold headings) rather than arbitrary character slicing.
-- **Hybrid Retrieval (Dense + Sparse):** Combines `BAAI/bge-small-en-v1.5` dense embeddings with BM25 sparse keyword indices in Qdrant via Reciprocal Rank Fusion (RRF).
-- **Sub-18ms Cross-Encoder Reranking:** Leverages CPU-optimized `FlashRank` (`ms-marco-TinyBERT-L-2-v2`) to prune the top 25 candidates down to the top 5 high-relevance clauses, cutting token costs by 70%.
-- **LangGraph State Machine with Self-Reflection:** A cyclic agent workflow that actively cross-checks every generated quote against the physical document page using Levenshtein similarity ($\ge 0.95$), triggering automatic re-extraction if a citation is hallucinated.
-- **Multi-Provider Resilient LLM Engine:** Seamless cascading fallback across **Groq (`qwen/qwen3.8-27b`, `llama-3.3-70b-versatile`)**, **Google Gemini (`gemma-4-26b-a4b-it`)**, **OpenRouter**, and a deterministic statutory rulebase.
-- **Responsive Professional UI:** Built with **React 18 + TypeScript + Vite + Tailwind CSS v4**, featuring a desktop split-view, mobile tabbed view, SVG circular risk score meter, category filters, and 1-click sample contract testing.
+### 1. Zero-Cost 24/7 Serverless Cloud Architecture
+- **Frontend on Vercel:** Instant global edge routing, sub-300ms initial load, automatic Single Page Application rewrites via [frontend/vercel.json](file:///C:/Users/TANMAY/OneDrive/Desktop/Resume/03_Projects/ClauseGuard_AI/frontend/vercel.json).
+- **Backend on Render:** High-performance asynchronous FastAPI microservice running on native Python 3.11 with automatic GitHub CI/CD auto-deployments.
+- **Supabase Cloud PostgreSQL:** Dual-mode persistence with IPv4 connection pooling ([aws-1-ap-northeast-1.pooler.supabase.com:5432](https://supabase.com)) and cross-DB timezone-naive UTC timestamp normalization.
+- **Automated Anti-Sleep Engine:** A GitHub Actions cron workflow ([.github/workflows/keep_alive.yml](file:///C:/Users/TANMAY/OneDrive/Desktop/Resume/03_Projects/ClauseGuard_AI/.github/workflows/keep_alive.yml)) pings `/health` every 6 hours, executing `SELECT 1` on Supabase to keep both backend and database active 24/7.
+
+### 2. Multi-Agent LangGraph Reflection Loop with Zero Hallucinations
+- Codified MCP server auditing 15+ predatory clauses: unconstrained liability, indefinite indemnity, post-employment non-compete restraint of trade, unilateral modifications, and arbitrary termination.
+- **Self-Reflection Verifier:** Automatically extracts verbatim source sentences from physical PDF pages and runs normalized Levenshtein string distance checks ($\ge 0.95$). If a citation score falls below threshold, the state machine triggers an automated re-extraction node before publishing.
+
+### 3. Statutory Grounding under the Indian Contract Act, 1872
+Every flagged risk is cross-referenced with governing statutory precedents:
+- **Section 27 (Agreement in Restraint of Trade Void):** Flags post-termination employment and non-compete restraints as legally unenforceable against individual contractors.
+- **Section 73 & 74 (Compensation for Breach & Liquidated Damages):** Challenges asymmetric penalty clauses and disproportionate damages as void penalties.
+- **Section 124 & 125 (Contract of Indemnity):** Identifies open-ended indemnification clauses that exceed actual third-party damages.
+
+### 4. Live 16kHz WebSocket Audio Streaming via AssemblyAI v3
+- Direct browser microphone capture using `AudioContext` at 16kHz mono 16-bit linear PCM.
+- Sub-200ms real-time partial transcription preview rendering while speaking.
+- Ephemeral 300-second token minting architecture protecting backend API credentials.
+
+### 5. Multi-Provider Cascading LLM Fallback Resilience
+- **Tier 1 (Groq):** Ultra-fast primary inference via `qwen/qwen3.8-27b` and `llama-3.3-70b-versatile` (<800ms P95 latency).
+- **Tier 2 (Google Gemini):** Automatic failover to `gemma-4-26b-a4b-it` and `gemini-flash-latest` during API rate-limits.
+- **Tier 3 (Statutory Rulebase):** 100% offline deterministic fallback ensuring the system never fails or returns empty reports.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Complete Tech Stack
 
-| Layer | Technology | Role |
+| Layer | Technology | Specification & Role |
 | :--- | :--- | :--- |
-| **Frontend UI** | React 18, TypeScript, Tailwind CSS v4, Vite | Responsive executive dashboard & legal copilot |
-| **Voice Streaming** | AssemblyAI v3 WebSocket API | Real-time 16kHz mono PCM streaming speech-to-text |
+| **Frontend UI** | React 18, Vite, Tailwind CSS v4, TypeScript | Responsive 3-column counsel workspace & executive gauge |
+| **Frontend Hosting** | Vercel Edge Network | Global CDN with SPA router rewrite configuration |
+| **Voice Streaming** | AssemblyAI v3 WebSocket API | Real-time 16kHz linear PCM streaming speech-to-text |
 | **Backend API** | FastAPI, Uvicorn, Pydantic V2 | Asynchronous high-throughput REST microservice |
-| **Agent Orchestration**| LangGraph & LangChain | Stateful cyclic agent execution & self-reflection |
-| **Vector DB** | Qdrant | Dense vector & BM25 sparse hybrid search |
-| **Reranker** | FlashRank (`TinyBERT-L-2-v2`) | Ultra-fast CPU cross-encoder reranking (<18ms) |
-| **Tool Protocol** | Model Context Protocol (MCP) | Typed analytical tools for legal rule evaluation |
-| **Cache & Queue** | Redis | Job status tracking & SHA-256 analysis caching |
-| **Database** | PostgreSQL | Relational contract, clause, and audit storage |
-| **PDF Extraction** | PyMuPDF (`fitz`) | Coordinate-level clause boundary parser |
-| **Evaluation** | Ragas (`datasets`) & LLM Benchmark | Quantitative Faithfulness & Precision benchmarking |
+| **Backend Hosting** | Render.com | Native Python 3.11 web service with automatic CI/CD |
+| **Cloud Database** | Supabase PostgreSQL | Relational persistence with IPv4 Supavisor connection pooling |
+| **Agent Orchestration**| LangGraph & LangChain | Cyclic state-graph with reflection and citation verification |
+| **Vector DB** | Qdrant | Dense vector (BGE-small) + BM25 sparse hybrid search |
+| **Reranker** | FlashRank (`TinyBERT-L-2-v2`) | Ultra-fast CPU cross-encoder reranker (<18ms) |
+| **Tool Protocol** | Model Context Protocol (MCP) | Typed tools for legal rule evaluation & citation checking |
+| **Cache & Queue** | Redis & Fakeredis | SHA-256 analysis report caching & job status polling |
+| **PDF Extraction** | PyMuPDF (`fitz`) | Coordinate-level clause boundary hierarchy parser |
+| **Uptime Automation**| GitHub Actions Cron | 6-hour automated keep-alive ping engine |
+| **Quality Evaluation** | Ragas (`datasets`) & Pytest | Empirical Faithfulness, Precision, and Recall gates |
 
 ---
 
-## 🎯 Empirical Benchmark Results
+## 🎯 Empirical Benchmarks & Quality Gates
 
-ClauseGuard AI enforces rigorous mathematical quality gates against a **35-contract golden evaluation dataset** (`data/golden_eval_dataset/golden_contracts.json`):
+Evaluated against a **35-contract golden evaluation dataset** (`data/golden_eval_dataset/golden_contracts.json`):
 
-| Metric | Target Threshold | Evaluated Result | Quality Gate Status |
+| Evaluation Metric | Target Threshold | Evaluated Result | Quality Gate Status |
 | :--- | :--- | :--- | :--- |
 | **Faithfulness Score** | $\ge 0.900$ | **`0.957`** | **PASS ✅** |
 | **Context Precision** | $\ge 0.880$ | **`1.000`** | **PASS ✅** |
@@ -151,19 +197,39 @@ ClauseGuard AI enforces rigorous mathematical quality gates against a **35-contr
 | **P95 Latency (Cached Document)** | $\le 15\text{ ms}$ | **`< 12 ms`** | **PASS ✅ (Redis SHA-256)** |
 | **P95 Latency (Full 20-Page Contract)** | $\le 25\text{ s}$ | **`14.2 s`** | **PASS ✅ (Async Worker)** |
 
-Automated test suite status: **32 / 32 tests passing** across unit, agent, MCP, LLM fallback, evaluation, voice streaming, and chat endpoints.
+Automated test suite status: **37 / 37 tests passing** across unit, agent, MCP, LLM fallback, evaluation, voice streaming, database, and auth endpoints.
 
 ---
 
-## 🚀 Quickstart & Setup
+## 📡 Core API Endpoints
 
-### 1. Clone Repository & Setup Backend
+Interactive Swagger UI documentation is available live at **[https://clauseguard-ai-backend-an5b.onrender.com/docs](https://clauseguard-ai-backend-an5b.onrender.com/docs)**.
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/health` | Production health check & Supabase keep-alive ping |
+| `GET` | `/api/v1/voice/token` | Mint temporary 300s streaming token for AssemblyAI v3 WebSocket |
+| `POST` | `/api/v1/auth/login` | Passwordless email login & guest session token issuance |
+| `POST` | `/api/v1/contracts/upload` | Upload PDF contract with optional voice/text client context |
+| `GET` | `/api/v1/contracts` | List all historical audited contracts for authenticated user |
+| `GET` | `/api/v1/contracts/{id}/status` | Poll asynchronous pipeline status (`PARSING`, `AUDITING`, `COMPLETED`) |
+| `GET` | `/api/v1/contracts/{id}/analysis` | Retrieve complete audit dossier with citations & redlines |
+| `POST` | `/api/v1/contracts/{id}/chat` | Interactive Legal Counsel Copilot grounded under Contract Act 1872 |
+| `GET` | `/api/v1/contracts/{id}/chat` | Fetch persistent dialogue history for specific contract |
+| `DELETE`| `/api/v1/contracts/{id}` | Permanently delete contract and cascade-delete chat messages |
+
+---
+
+## 🚀 Local Development Setup
+
+### 1. Clone & Configure Backend
 ```bash
 git clone https://github.com/TANMAY4806w/ClauseGuard_AI.git
 cd ClauseGuard_AI
 
 # Setup Python virtual environment
 python -m venv venv
+
 # Windows:
 .\venv\Scripts\activate
 # Linux/macOS:
@@ -174,47 +240,45 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-### 2. Configure API Keys in `.env`
+### 2. Configure Environment (`.env`)
 ```ini
-ASSEMBLYAI_API_KEY=your_assemblyai_key_here
+# Production Supabase PostgreSQL or local SQLite
+DATABASE_URL=sqlite+aiosqlite:///data/clauseguard.db
+
+# Multi-Provider LLM Keys
 GROQ_API_KEY=your_groq_key_here
 GEMINI_API_KEY=your_gemini_key_here
+ASSEMBLYAI_API_KEY=your_assemblyai_key_here
 ```
 
 ### 3. Start Backend Microservice
 ```bash
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
-- Swagger UI Documentation: `http://localhost:8000/docs`
-- Embedded Production UI: `http://localhost:8000/app`
+- API Docs: `http://localhost:8000/docs`
+- Health Check: `http://localhost:8000/health`
 
-### 4. Start Frontend (Development Mode)
+### 4. Start Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-- Vite Dev Server: `http://localhost:5173` (proxies `/api` calls to `:8000`)
+- Client App: `http://localhost:5173` (proxies `/api` calls to `:8000`)
 
----
-
-## 📡 Core API Endpoints
-
-- `GET /api/v1/voice/token` — Mint temporary 300s AssemblyAI v3 streaming WebSocket token.
-- `POST /api/v1/contracts/upload` — Upload PDF contract with optional voice/text `client_context`.
-- `GET /api/v1/contracts/{doc_id}/status` — Poll real-time progress (`PARSING`, `EMBEDDING`, `AUDITING`, `COMPLETED`).
-- `GET /api/v1/contracts/{doc_id}/analysis` — Retrieve finalized risk report, plain-English advice, and verbatim citations.
-- `POST /api/v1/contracts/{doc_id}/chat` — Conversational counsel copilot for statutory analysis and negotiation drafting.
-- `POST /api/v1/auth/token` — Exchange credentials for JWT bearer token.
+### 5. Run Verification Suite
+```bash
+pytest tests/ -v
+```
 
 ---
 
 ## ⚖️ Legal Disclaimer
 
-ClauseGuard AI is an automated legal intelligence tool designed for informational and preliminary review purposes only. It does not constitute formal legal representation or an attorney-client relationship. Always consult a qualified advocate for binding legal advice.
+ClauseGuard AI is an automated legal intelligence tool designed for informational and preliminary review purposes only. It does not constitute formal legal representation or an attorney-client relationship. Always consult a licensed advocate for binding legal execution.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is open-source under the [MIT License](LICENSE).

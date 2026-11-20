@@ -258,3 +258,18 @@ All endpoints run on Python 3.11+ using asynchronous `async def` route handlers.
     ]
   }
   ```
+
+---
+
+## 4. Production Cloud Database (Supabase PostgreSQL) & Persistence Topology
+
+In production, persistence is managed by **Supabase Cloud PostgreSQL** using an IPv4 connection pooler to support modern serverless environments:
+
+| Attribute | Production Value |
+| :--- | :--- |
+| **Provider** | Supabase Managed Cloud PostgreSQL |
+| **Connection Mode** | Supavisor Session Pooler (Port `5432`) |
+| **Host** | `aws-1-ap-northeast-1.pooler.supabase.com` |
+| **Driver** | `postgresql+asyncpg` (SQLAlchemy 2.0 Async Engine) |
+| **Timestamp Format**| Timezone-naive UTC (`utcnow()`) for PostgreSQL & SQLite portability |
+| **Keep-Alive Engine**| GitHub Actions cron triggers `GET /health` executing `SELECT 1` |

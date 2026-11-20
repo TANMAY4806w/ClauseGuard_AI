@@ -7,6 +7,12 @@ python-multipart>=0.0.9
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 
+# Database & Async Engine (Supabase PostgreSQL + SQLite)
+sqlalchemy[asyncio]>=2.0.28
+asyncpg>=0.29.0
+greenlet>=3.0.3
+aiosqlite>=0.20.0
+
 # PDF Processing & Ingestion
 PyMuPDF>=1.23.0
 

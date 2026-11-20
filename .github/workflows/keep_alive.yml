@@ -8,24 +8,32 @@ on:
 
 jobs:
   keep-alive:
-    name: Ping Hugging Face & Supabase
+    name: Ping Backend & Supabase DB
     runs-on: ubuntu-latest
     steps:
       - name: Send Keep-Alive Ping to Health Endpoint
         env:
-          APP_HOST: ${{ secrets.HF_SPACE_HOST }}
+          APP_URL: ${{ secrets.BACKEND_URL || secrets.RENDER_URL || secrets.HF_SPACE_HOST }}
         run: |
-          TARGET_HOST="${APP_HOST:-tanmay4806w-clauseguard-ai.hf.space}"
-          HEALTH_URL="https://${TARGET_HOST}/health"
-          echo "Sending automated keep-alive ping to $HEALTH_URL..."
+          TARGET="${APP_URL:-https://clauseguard-ai-backend.onrender.com}"
+          # If target does not start with http, prepend https://
+          if [[ "$TARGET" != http* ]]; then
+            TARGET="https://${TARGET}"
+          fi
+          # Ensure health endpoint suffix
+          if [[ "$TARGET" != */health ]]; then
+            TARGET="${TARGET%/}/health"
+          fi
           
-          HTTP_RESPONSE=$(curl -s -o response.json -w "%{http_code}" "$HEALTH_URL" || echo "000")
+          echo "Sending automated keep-alive ping to $TARGET..."
+          
+          HTTP_RESPONSE=$(curl -s -o response.json -w "%{http_code}" "$TARGET" || echo "000")
           echo "HTTP Status Code: $HTTP_RESPONSE"
           
           if [ "$HTTP_RESPONSE" -ge 200 ] && [ "$HTTP_RESPONSE" -lt 400 ]; then
-            echo "Success: Hugging Face Space & Supabase DB kept active."
+            echo "Success: Backend and Supabase DB kept active."
             cat response.json
           else
             echo "Warning: Endpoint returned $HTTP_RESPONSE. Attempting fallback wake-up..."
-            curl -s "$HEALTH_URL" || true
+            curl -s "$TARGET" || true
           fi

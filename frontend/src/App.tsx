@@ -13,6 +13,7 @@ import type {
   ContractAnalysisResponse,
   ClauseAuditItem,
   RiskLevel,
+  ContractListItem,
 } from './types';
 import {
   ShieldAlert,
@@ -36,6 +37,47 @@ export function App() {
   const [copilotTriggerMessage, setCopilotTriggerMessage] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [vaultRefreshTrigger, setVaultRefreshTrigger] = useState(0);
+  const [sessionContracts, setSessionContracts] = useState<ContractListItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('clauseguard_guest_contracts');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const addSessionContract = (report: ContractAnalysisResponse, fileSize = 0) => {
+    setSessionContracts((prev) => {
+      const existingIdx = prev.findIndex((c) => c.id === report.doc_id);
+      const updatedItem: ContractListItem = {
+        id: report.doc_id,
+        filename: report.contract_name,
+        file_size: fileSize,
+        status: 'COMPLETED',
+        risk_score: report.overall_contract_risk_score,
+        created_at: report.audit_timestamp || new Date().toISOString(),
+      };
+      const updated = existingIdx >= 0
+        ? prev.map((item, idx) => (idx === existingIdx ? updatedItem : item))
+        : [updatedItem, ...prev];
+      try {
+        localStorage.setItem('clauseguard_guest_contracts', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Failed to save to localStorage:', e);
+      }
+      return updated;
+    });
+  };
+
+  const handleDeleteContract = (docId: string) => {
+    setSessionContracts((prev) => {
+      const next = prev.filter((c) => c.id !== docId);
+      try {
+        localStorage.setItem('clauseguard_guest_contracts', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
 
   // Responsive tab switcher for smaller screens (mobile / tablet)
   const [activePane, setActivePane] = useState<'vault' | 'canvas' | 'copilot'>('canvas');
@@ -58,6 +100,7 @@ export function App() {
           }
           const report = await apiClient.getAnalysis(activeDocId);
           setAnalysis(report);
+          addSessionContract(report);
           setIsUploading(false);
           setVaultRefreshTrigger((prev) => prev + 1);
         } else if (status.current_stage === 'FAILED') {
@@ -101,6 +144,7 @@ export function App() {
       if (uploadRes.status === 'COMPLETED') {
         const report = await apiClient.getAnalysis(uploadRes.doc_id);
         setAnalysis(report);
+        addSessionContract(report, file.size);
         setIsUploading(false);
         setVaultRefreshTrigger((prev) => prev + 1);
       }
@@ -126,6 +170,7 @@ export function App() {
     try {
       const report = await apiClient.getAnalysis(docId);
       setAnalysis(report);
+      addSessionContract(report);
       setContractFilename(report.contract_name);
       setIsUploading(false);
     } catch (err) {
@@ -168,9 +213,10 @@ export function App() {
       {/* ========================================================================= */}
       {/* COLUMN 1: LEFT CONTRACT VAULT SIDEBAR (280px)                            */}
       {/* ========================================================================= */}
-      <div className={`xl:flex ${activePane === 'vault' ? 'flex w-full z-40' : 'hidden xl:flex'}`}>
+      <div className={`lg:flex ${activePane === 'vault' ? 'flex w-full z-40' : 'hidden lg:flex'}`}>
         <ContractVaultSidebar
           activeDocId={activeDocId}
+          sessionContracts={sessionContracts}
           onSelectContract={(id) => {
             handleSelectContract(id);
             setActivePane('canvas');
@@ -179,6 +225,7 @@ export function App() {
             handleNewContract();
             setActivePane('canvas');
           }}
+          onDeleteContract={handleDeleteContract}
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
           refreshTrigger={vaultRefreshTrigger}
         />
@@ -189,7 +236,7 @@ export function App() {
       {/* ========================================================================= */}
       <section
         className={`flex-1 flex flex-col h-screen overflow-hidden ${
-          activePane === 'canvas' ? 'flex' : 'hidden xl:flex'
+          activePane === 'canvas' ? 'flex' : 'hidden lg:flex'
         }`}
       >
         {/* Center Header */}
@@ -252,7 +299,7 @@ export function App() {
 
           {/* State 3: Contract Audit Report View */}
           {analysis && !isUploading && (
-            <div className="max-w-5xl mx-auto space-y-6 pb-12">
+            <div className="max-w-5xl mx-auto space-y-6 pb-28 sm:pb-36">
               {/* Executive Risk Gauge */}
               <RiskGauge
                 score={analysis.overall_contract_risk_score}
@@ -334,8 +381,8 @@ export function App() {
       {/* COLUMN 3: RIGHT PERSISTENT LEGAL COUNSEL COPILOT DOCK (380px)            */}
       {/* ========================================================================= */}
       <aside
-        className={`w-96 shrink-0 h-screen flex flex-col bg-[#0d0e12] border-l border-white/[0.08] ${
-          activePane === 'copilot' ? 'flex w-full z-40' : 'hidden xl:flex'
+        className={`w-80 xl:w-96 shrink-0 h-screen flex flex-col bg-[#0d0e12] border-l border-white/[0.08] ${
+          activePane === 'copilot' ? 'flex w-full z-40' : 'hidden lg:flex'
         }`}
       >
         <LegalCopilot
@@ -348,9 +395,9 @@ export function App() {
       </aside>
 
       {/* ========================================================================= */}
-      {/* MOBILE / TABLET BOTTOM NAVIGATION DOCK (when screen < xl)                 */}
+      {/* MOBILE / TABLET BOTTOM NAVIGATION DOCK (when screen < lg)                 */}
       {/* ========================================================================= */}
-      <div className="xl:hidden fixed bottom-0 left-0 right-0 h-14 bg-[#0a0b0d] border-t border-white/[0.08] flex items-center justify-around z-50">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-14 bg-[#0a0b0d] border-t border-white/[0.08] flex items-center justify-around z-50">
         <button
           onClick={() => setActivePane('vault')}
           className={`flex flex-col items-center justify-center text-[10px] font-mono ${

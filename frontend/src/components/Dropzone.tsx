@@ -148,18 +148,18 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
       {/* Editorial Header */}
-      <div className="mb-8 border-b border-white/[0.06] pb-6">
+      <div className="mb-5 border-b border-white/[0.06] pb-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-mono tracking-wider text-amber-400 uppercase mb-2">
+            <div className="inline-flex items-center space-x-2 text-xs font-mono tracking-wider text-amber-400 uppercase mb-1.5">
               <span>Section 14 • Commercial Ingestion Desk</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
               Autonomous Legal Risk Intelligence
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
+            <p className="mt-1 text-xs text-zinc-400 max-w-2xl leading-relaxed">
               Upload any commercial agreement for deterministic semantic clause extraction, 15+ predatory rule checks, and statutory grounding under the Indian Contract Act, 1872.
             </p>
           </div>
@@ -177,17 +177,17 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Error Alert */}
         {errorMessage && (
-          <div className="flex items-center space-x-2.5 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300">
+          <div className="flex items-center space-x-2.5 rounded-lg border border-rose-500/30 bg-rose-500/10 p-2.5 text-xs text-rose-300">
             <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {/* 2-Column Executive Workbench */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           {/* Left Column: Contract Ingestion Target (7 cols) */}
           <div className="lg:col-span-7 flex flex-col">
             <div
@@ -195,7 +195,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => !file && fileInputRef.current?.click()}
-              className={`flex-1 flex flex-col justify-between rounded-xl border p-6 sm:p-8 transition-all ${
+              className={`flex-1 flex flex-col justify-between rounded-xl border p-5 sm:p-6 transition-all ${
                 isDragOver
                   ? 'border-amber-500/60 bg-amber-500/[0.04]'
                   : file
@@ -212,7 +212,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
               />
 
               {!file ? (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Top: Section Header */}
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">
@@ -224,25 +224,25 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
                   </div>
 
                   {/* Dropzone Center */}
-                  <div className="py-6 text-center space-y-3">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl border border-white/[0.1] bg-[#181a20] text-zinc-300 shadow-inner">
-                      <FileText className="h-6 w-6 text-amber-400" />
+                  <div className="py-3 text-center space-y-2">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.1] bg-[#181a20] text-zinc-300 shadow-inner">
+                      <FileText className="h-5 w-5 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-zinc-100">
+                      <p className="text-xs sm:text-sm font-semibold text-zinc-100">
                         Drag and drop your contract PDF, or{' '}
                         <span className="text-amber-400 underline underline-offset-4 decoration-amber-400/40 hover:text-amber-300">
                           browse files
                         </span>
                       </p>
-                      <p className="mt-1 text-xs text-zinc-500">
+                      <p className="mt-0.5 text-[11px] text-zinc-500">
                         Master Services Agreements, Vendor SOWs, Employment Covenants, Commercial Leases, NDAs
                       </p>
                     </div>
                   </div>
 
                   {/* 1-Click Sample Ingest */}
-                  <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <div className="text-[11px] text-zinc-500 font-mono">
                       No document ready? Test live:
                     </div>
@@ -301,7 +301,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
           </div>
 
           {/* Right Column: Bargaining Position & Voice Dictation Desk (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-white/[0.08] bg-[#121418] p-6 space-y-4">
+          <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-white/[0.08] bg-[#121418] p-5 space-y-3">
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                 <div>
@@ -404,11 +404,11 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onAnalyze, isLoading }) => {
               </div>
 
               {/* Text Area */}
-              <div className="mt-3">
+              <div className="mt-2.5">
                 <textarea
                   value={clientContext}
                   onChange={(e) => setClientContext(e.target.value)}
-                  rows={4}
+                  rows={3}
                   placeholder="State your role and contractual priorities or speak via microphone (e.g. 'I am an independent developer in Pune. I need payment within 30 days and zero non-compete restrictions')..."
                   className="w-full rounded-lg border border-white/[0.08] bg-[#0b0c0e] p-3 text-xs text-zinc-200 placeholder-zinc-600 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30 leading-relaxed font-mono"
                 />

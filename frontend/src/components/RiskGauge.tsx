@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, AlertTriangle, Scale, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Scale, ShieldAlert } from 'lucide-react';
 
 interface RiskGaugeProps {
   score: number;
@@ -47,38 +47,37 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
   }
 
   // Circular gauge math
-  const radius = 56;
+  const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (Math.min(100, Math.max(0, score)) / 100) * circumference;
 
   const criticalCount = breakdown['CRITICAL'] || 0;
   const highCount = breakdown['HIGH'] || 0;
   const mediumCount = breakdown['MEDIUM'] || 0;
-  const lowCount = (breakdown['LOW'] || 0) + (breakdown['SAFE'] || 0);
 
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-[#121418] p-6 shadow-xl">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-        {/* Left: Gauge + Advisory Text */}
-        <div className="flex items-center space-x-6">
+    <div className="rounded-xl border border-white/[0.08] bg-[#121418] p-5 shadow-xl">
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-5">
+        {/* Left: Circular Score Gauge + Title & Legal Advisory */}
+        <div className="flex items-center space-x-5">
           <div className="relative flex items-center justify-center shrink-0">
-            <svg className="h-32 w-32 transform -rotate-90">
+            <svg className="h-28 w-28 transform -rotate-90">
               {/* Background Track */}
               <circle
-                cx="64"
-                cy="64"
+                cx="56"
+                cy="56"
                 r={radius}
-                stroke="#27272a"
-                strokeWidth="8"
+                stroke="#22242a"
+                strokeWidth="7"
                 fill="transparent"
               />
               {/* Active Progress */}
               <circle
-                cx="64"
-                cy="64"
+                cx="56"
+                cy="56"
                 r={radius}
                 stroke={strokeColor}
-                strokeWidth="8"
+                strokeWidth="7"
                 fill="transparent"
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
@@ -87,22 +86,22 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center text-center">
-              <span className={`text-3xl font-black tracking-tight font-mono ${tierColor}`}>
+              <span className={`text-2xl font-black tracking-tight font-mono ${tierColor}`}>
                 {Math.round(score)}
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">
-                Score / 100
+              <span className="text-[8px] font-mono uppercase tracking-widest text-zinc-500">
+                SCORE / 100
               </span>
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className={`inline-flex items-center rounded border px-2 py-0.5 text-[10px] font-bold font-mono uppercase tracking-wider ${badgeBg}`}>
+              <span className={`inline-flex items-center rounded border px-2 py-0.5 text-[9px] font-bold font-mono uppercase tracking-wider ${badgeBg}`}>
                 {tierLabel}
               </span>
             </div>
-            <h3 className="text-base font-bold text-white truncate max-w-sm sm:max-w-md">
+            <h3 className="text-sm font-bold text-white truncate max-w-xs sm:max-w-md">
               {contractName}
             </h3>
             <p className="text-xs text-zinc-400 max-w-sm sm:max-w-md leading-relaxed">
@@ -111,51 +110,42 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({
           </div>
         </div>
 
-        {/* Right: Bento Metrics Matrix */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 w-full lg:w-auto">
+        {/* Right: Telemetry Metrics Matrix */}
+        <div className="flex flex-wrap items-center gap-2 self-stretch xl:self-center">
           {/* Critical */}
-          <div className="rounded-lg border border-rose-500/20 bg-rose-500/[0.04] p-3 text-center min-w-[85px]">
+          <div className="flex-1 sm:flex-none rounded-lg border border-rose-500/20 bg-rose-500/[0.04] px-3 py-2 text-center min-w-[76px]">
             <div className="flex items-center justify-center space-x-1 text-rose-400 mb-0.5">
-              <AlertCircle className="h-3 w-3" />
-              <span className="text-[10px] font-mono font-semibold uppercase">Critical</span>
+              <AlertCircle className="h-2.5 w-2.5" />
+              <span className="text-[9px] font-mono font-bold uppercase">Critical</span>
             </div>
-            <span className="text-lg font-bold font-mono text-white">{criticalCount}</span>
+            <span className="text-base font-bold font-mono text-white">{criticalCount}</span>
           </div>
 
           {/* High */}
-          <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.04] p-3 text-center min-w-[85px]">
+          <div className="flex-1 sm:flex-none rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-3 py-2 text-center min-w-[76px]">
             <div className="flex items-center justify-center space-x-1 text-amber-400 mb-0.5">
-              <AlertTriangle className="h-3 w-3" />
-              <span className="text-[10px] font-mono font-semibold uppercase">High</span>
+              <AlertTriangle className="h-2.5 w-2.5" />
+              <span className="text-[9px] font-mono font-bold uppercase">High</span>
             </div>
-            <span className="text-lg font-bold font-mono text-white">{highCount}</span>
+            <span className="text-base font-bold font-mono text-white">{highCount}</span>
           </div>
 
           {/* Medium */}
-          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/[0.04] p-3 text-center min-w-[85px]">
+          <div className="flex-1 sm:flex-none rounded-lg border border-yellow-500/20 bg-yellow-500/[0.04] px-3 py-2 text-center min-w-[76px]">
             <div className="flex items-center justify-center space-x-1 text-yellow-400 mb-0.5">
-              <Scale className="h-3 w-3" />
-              <span className="text-[10px] font-mono font-semibold uppercase">Medium</span>
+              <Scale className="h-2.5 w-2.5" />
+              <span className="text-[9px] font-mono font-bold uppercase">Medium</span>
             </div>
-            <span className="text-lg font-bold font-mono text-white">{mediumCount}</span>
+            <span className="text-base font-bold font-mono text-white">{mediumCount}</span>
           </div>
 
-          {/* Safe */}
-          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] p-3 text-center min-w-[85px]">
-            <div className="flex items-center justify-center space-x-1 text-emerald-400 mb-0.5">
-              <CheckCircle2 className="h-3 w-3" />
-              <span className="text-[10px] font-mono font-semibold uppercase">Safe</span>
-            </div>
-            <span className="text-lg font-bold font-mono text-white">{lowCount}</span>
-          </div>
-
-          {/* Flagged / Total Ratio */}
-          <div className="rounded-lg border border-white/[0.08] bg-[#16181f] p-3 text-center min-w-[85px] col-span-2 sm:col-span-1">
+          {/* Audit Ratio */}
+          <div className="flex-1 sm:flex-none rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-center min-w-[76px]">
             <div className="flex items-center justify-center space-x-1 text-zinc-400 mb-0.5">
-              <ShieldAlert className="h-3 w-3" />
-              <span className="text-[10px] font-mono font-semibold uppercase">Audit Ratio</span>
+              <ShieldAlert className="h-2.5 w-2.5" />
+              <span className="text-[9px] font-mono font-bold uppercase">Hazards</span>
             </div>
-            <span className="text-lg font-bold font-mono text-zinc-200">
+            <span className="text-base font-bold font-mono text-amber-300">
               {flaggedCount}/{totalClauses}
             </span>
           </div>

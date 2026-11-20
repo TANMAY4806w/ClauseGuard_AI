@@ -11,6 +11,7 @@ import {
   BookOpen,
   Quote,
   Shield,
+  FileCheck2,
 } from 'lucide-react';
 import type { ClauseAuditItem, RiskLevel } from '../types';
 
@@ -50,6 +51,17 @@ export const RiskCard: React.FC<RiskCardProps> = ({ item, onAskCopilot }) => {
 
   const badge = getRiskBadge(item.risk_level);
 
+  // Normalize section text to authoritative 'Sec X.X' format (eliminating symbol glyph ligatures & glitches)
+  const cleanSection = (() => {
+    const raw = item.citation.section || '';
+    let cleaned = raw.replace(/^[§\u00A7\s]+/, '').replace(/^99\s*/, '').trim();
+    if (!cleaned) return 'Sec 1.0';
+    if (!cleaned.toLowerCase().startsWith('sec')) {
+      return `Sec ${cleaned}`;
+    }
+    return cleaned;
+  })();
+
   const handleCopyRedline = async () => {
     try {
       await navigator.clipboard.writeText(item.recommended_counter_term);
@@ -72,111 +84,106 @@ export const RiskCard: React.FC<RiskCardProps> = ({ item, onAskCopilot }) => {
           <span className="rounded border border-white/[0.06] bg-white/[0.02] px-2 py-0.5 text-[10px] font-mono font-medium text-zinc-300">
             {item.clause_category}
           </span>
-          <span className="text-[10px] text-zinc-600 font-mono">{item.risk_id}</span>
+          <span className="text-[10px] text-zinc-500 font-mono">{item.risk_id}</span>
         </div>
 
         {/* Verifiable Physical Citation */}
         <div className="flex items-center space-x-1.5 text-xs text-zinc-400 font-mono">
-          <Quote className="h-3 w-3 text-amber-400" />
-          <span className="text-zinc-200 font-semibold">{item.citation.section}</span>
+          <Quote className="h-3 w-3 text-amber-400 shrink-0" />
+          <span className="text-zinc-200 font-semibold">{cleanSection}</span>
           <span className="text-zinc-600">•</span>
-          <span>Page {item.citation.page}</span>
+          <span className="text-amber-300/80">Page {item.citation.page}</span>
         </div>
       </div>
 
       {/* Headline & Danger Summary */}
       <div className="mt-3">
         <h4 className="text-sm font-bold text-white tracking-tight">{item.headline}</h4>
-        <p className="mt-1.5 text-xs sm:text-[13px] text-zinc-300 leading-relaxed">
+        <p className="mt-1.5 text-xs sm:text-[13px] text-zinc-300 leading-relaxed font-sans">
           {item.danger_summary}
         </p>
       </div>
 
       {/* Statutory Grounding Callout (Indian Contract Act, 1872) */}
       {item.statutory_compliance_note && (
-        <div className="mt-3 rounded-lg border border-amber-500/25 bg-amber-500/[0.04] p-3 flex items-start space-x-2.5 text-xs text-amber-200/90 font-mono">
+        <div className="mt-3.5 rounded-lg border border-amber-500/25 bg-amber-500/[0.04] p-3 flex items-start space-x-2.5 text-xs text-amber-200/90 font-mono">
           <BookOpen className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
-            <span className="font-bold text-amber-300 uppercase tracking-wider text-[10px] block mb-0.5">
+            <span className="font-bold text-amber-300 uppercase tracking-wider text-[10px] block mb-1">
               Statutory Precedent • Indian Contract Act, 1872
             </span>
-            <span>{item.statutory_compliance_note}</span>
+            <span className="text-zinc-200 leading-normal">{item.statutory_compliance_note}</span>
           </div>
         </div>
       )}
 
-      {/* Expandable Section & Action Controls */}
-      <div className="mt-4 pt-3 border-t border-white/[0.06]">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center space-x-1 text-xs font-mono font-semibold text-amber-400 hover:text-amber-300 transition"
-          >
-            <span>{isExpanded ? 'Hide Citation & Redline' : 'Inspect Verbatim Excerpt & Counter-Term'}</span>
-            {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-          </button>
+      {/* Expandable Section: Verbatim Excerpt & Counter-Proposal */}
+      {isExpanded && (
+        <div className="mt-3.5 space-y-3 pt-3 border-t border-white/[0.06]">
+          {/* Verbatim Excerpt from PDF */}
+          <div className="rounded-lg border border-white/[0.06] bg-[#090a0d] p-3 text-xs">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold block mb-1">
+              Verbatim Text from Document (Page {item.citation.page})
+            </span>
+            <p className="text-zinc-300 italic font-mono leading-relaxed bg-black/30 p-2 rounded border border-white/[0.04]">
+              &ldquo;{item.citation.verbatim_text}&rdquo;
+            </p>
+          </div>
 
-          <div className="flex items-center space-x-2">
-            {onAskCopilot && (
-              <button
-                onClick={() => onAskCopilot(item)}
-                className="inline-flex items-center space-x-1.5 rounded-lg border border-white/[0.08] bg-[#181a20] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:border-amber-500/40 hover:text-white transition"
-              >
-                <MessageSquare className="h-3 w-3 text-amber-400" />
-                <span>Discuss with Copilot</span>
-              </button>
-            )}
-            <button
-              onClick={handleCopyRedline}
-              className="inline-flex items-center space-x-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition font-mono"
-              title="Copy recommended counter-term to clipboard"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-3 w-3 text-emerald-400" />
-                  <span className="text-emerald-400">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3 w-3" />
-                  <span>Copy Redline</span>
-                </>
-              )}
-            </button>
+          {/* Recommended Counter-Term */}
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.03] p-3 text-xs">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center space-x-1">
+                <FileCheck2 className="h-3 w-3" />
+                <span>Recommended Counter-Proposal (Balanced Term)</span>
+              </span>
+            </div>
+            <p className="text-zinc-200 font-mono leading-relaxed bg-black/40 p-2.5 rounded border border-emerald-500/20">
+              {item.recommended_counter_term}
+            </p>
           </div>
         </div>
+      )}
 
-        {isExpanded && (
-          <div className="mt-3.5 space-y-3">
-            {/* Verbatim quote from PDF */}
-            <div className="rounded-lg bg-[#0b0c0e] p-3 border border-white/[0.06] text-xs font-mono">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
-                Verbatim Excerpt ({item.citation.section}, Page {item.citation.page}):
-              </span>
-              <p className="text-zinc-300 italic whitespace-pre-wrap leading-relaxed">
-                &ldquo;{item.citation.verbatim_text}&rdquo;
-              </p>
-            </div>
+      {/* Action Controls */}
+      <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="inline-flex items-center space-x-1 text-xs font-mono font-semibold text-amber-400 hover:text-amber-300 transition"
+        >
+          <span>{isExpanded ? 'Hide Citation & Redline' : 'Inspect Verbatim Excerpt & Counter-Term'}</span>
+          {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+        </button>
 
-            {/* Recommended Counter-term */}
-            <div className="rounded-lg bg-emerald-950/[0.15] border border-emerald-500/25 p-3 text-xs font-mono">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">
-                Recommended Substitute Language (Copy-Paste Redline):
-              </span>
-              <p className="text-emerald-200 whitespace-pre-wrap leading-relaxed">
-                {item.recommended_counter_term}
-              </p>
-            </div>
+        <div className="flex items-center space-x-2">
+          {onAskCopilot && (
+            <button
+              onClick={() => onAskCopilot(item)}
+              className="inline-flex items-center space-x-1.5 rounded-lg border border-white/[0.08] bg-[#181a20] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:border-amber-500/40 hover:text-white transition"
+            >
+              <MessageSquare className="h-3 w-3 text-amber-400" />
+              <span>Discuss with Copilot</span>
+            </button>
+          )}
 
-            {/* Negotiation Strategy */}
-            {item.negotiation_advice && (
-              <div className="text-xs text-zinc-400 font-mono leading-relaxed">
-                <span className="text-zinc-300 font-bold">Negotiation Tactic: </span>
-                {item.negotiation_advice}
-              </div>
+          <button
+            onClick={handleCopyRedline}
+            className="inline-flex items-center space-x-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition font-mono"
+            title="Copy recommended counter-term to clipboard"
+          >
+            {copied ? (
+              <>
+                <Check className="h-3 w-3 text-emerald-400" />
+                <span className="text-emerald-400">Copied</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-3 w-3" />
+                <span>Copy Redline</span>
+              </>
             )}
-          </div>
-        )}
+          </button>
+        </div>
       </div>
     </div>
   );

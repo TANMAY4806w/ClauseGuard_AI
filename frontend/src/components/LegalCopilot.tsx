@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Send,
   Mic,
@@ -22,6 +22,54 @@ interface LegalCopilotProps {
   onClearTrigger?: () => void;
 }
 
+/**
+ * Safely renders markdown bold (**text**), bullet points, and paragraphs
+ * without pulling in heavy external dependencies.
+ */
+function renderMarkdownContent(text: string) {
+  const paragraphs = text.split('\n\n');
+  return paragraphs.map((para, pIdx) => {
+    const lines = para.split('\n');
+    return (
+      <div key={pIdx} className="mb-2.5 last:mb-0 space-y-1">
+        {lines.map((line, lIdx) => {
+          const trimmed = line.trim();
+          const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('• ');
+          const cleanLine = isBullet ? trimmed.replace(/^[-•]\s*/, '') : line;
+
+          // Split by **bold** regex
+          const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g);
+          const renderedParts = parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              return (
+                <strong key={i} className="font-bold text-amber-200">
+                  {part.slice(2, -2)}
+                </strong>
+              );
+            }
+            return part;
+          });
+
+          if (isBullet) {
+            return (
+              <div key={lIdx} className="flex items-start space-x-1.5 ml-1 text-xs sm:text-[13px]">
+                <span className="text-amber-400 select-none shrink-0">•</span>
+                <span className="leading-relaxed">{renderedParts}</span>
+              </div>
+            );
+          }
+
+          return (
+            <div key={lIdx} className="leading-relaxed text-xs sm:text-[13px]">
+              {renderedParts}
+            </div>
+          );
+        })}
+      </div>
+    );
+  });
+}
+
 export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   docId,
   contractName,
@@ -29,12 +77,19 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   externalTriggerMessage,
   onClearTrigger,
 }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: 'assistant',
-      content: `Hello. I am your Legal Counsel Copilot for **${contractName}**. I have reviewed all extracted clauses against the **Indian Contract Act, 1872** and corporate risk standards.\n\nYou can ask me: how to negotiate high-risk terms, compromise language, or request a ready-to-send pushback email.`,
-    },
-  ]);
+  const getInitialWelcome = useCallback(
+    (name: string) => [
+      {
+        role: 'assistant' as const,
+        content: `Hello. I am your Legal Counsel Copilot for **${name}**.\n\nI have evaluated the agreement against the **Indian Contract Act, 1872** and standard corporate risk thresholds. Ask me how to negotiate high-risk terms, draft polite pushback emails, or request counter-proposals.`,
+      },
+    ],
+    []
+  );
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+    getInitialWelcome(contractName)
+  );
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -47,6 +102,37 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const baseInputRef = useRef('');
+
+  // Load persistent chat history when switching active documents
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadHistory = async () => {
+      if (!docId || docId === 'general_counsel') {
+        setMessages(getInitialWelcome(contractName));
+        return;
+      }
+      try {
+        const res = await apiClient.getChatHistory(docId);
+        if (!isCancelled) {
+          if (res.messages && res.messages.length > 0) {
+            setMessages(res.messages);
+          } else {
+            setMessages(getInitialWelcome(contractName));
+          }
+        }
+      } catch {
+        if (!isCancelled) {
+          setMessages(getInitialWelcome(contractName));
+        }
+      }
+    };
+
+    loadHistory();
+    return () => {
+      isCancelled = true;
+    };
+  }, [docId, contractName, getInitialWelcome]);
 
   // Live WebSocket Audio Transcription Hook
   const {
@@ -144,17 +230,17 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full rounded-xl border border-white/[0.08] bg-[#121418] shadow-xl overflow-hidden">
-      {/* Console Header */}
-      <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-3.5 bg-[#0e1014]">
-        <div className="flex items-center space-x-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
-            <Scale className="h-4 w-4" />
+    <div className="flex flex-col h-full bg-[#0d0e12] select-none">
+      {/* Console Header - matching exactly h-14 height of other columns */}
+      <div className="h-14 shrink-0 flex items-center justify-between border-b border-white/[0.06] px-4 bg-[#0c0d10]">
+        <div className="flex items-center space-x-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
+            <Scale className="h-3.5 w-3.5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="font-bold text-white text-xs sm:text-sm">Corporate Counsel Console</h3>
-              <span className="inline-flex items-center space-x-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.2 text-[9px] font-mono text-emerald-400 font-semibold">
+              <h3 className="font-bold text-white text-xs">Corporate Counsel Console</h3>
+              <span className="inline-flex items-center space-x-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.2 text-[9px] font-mono text-emerald-400 font-bold">
                 <span className="h-1 w-1 rounded-full bg-emerald-400" />
                 <span>GROUNDED</span>
               </span>
@@ -168,7 +254,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
 
       {/* Referenced Sections Header Bar */}
       {referencedSections.length > 0 && (
-        <div className="px-5 py-2 bg-[#0b0c0e] border-b border-white/[0.04] flex items-center space-x-2 overflow-x-auto text-[10px] font-mono">
+        <div className="px-4 py-2 bg-[#090a0d] border-b border-white/[0.04] flex items-center space-x-2 overflow-x-auto text-[10px] font-mono shrink-0">
           <span className="text-zinc-500 uppercase tracking-wider shrink-0 font-bold">
             Referenced Clauses:
           </span>
@@ -184,7 +270,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
       )}
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user';
           return (
@@ -193,25 +279,25 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
               className={`flex items-start space-x-2.5 ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               {!isUser && (
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 mt-1">
-                  <Bot className="h-3.5 w-3.5" />
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 mt-1">
+                  <Bot className="h-3 w-3" />
                 </div>
               )}
 
               <div
-                className={`group relative max-w-[88%] rounded-xl px-4 py-3 text-xs sm:text-[13px] leading-relaxed ${
+                className={`group relative max-w-[90%] rounded-xl px-3.5 py-2.5 text-xs sm:text-[13px] ${
                   isUser
-                    ? 'bg-[#1e2029] border border-white/[0.1] text-zinc-100 rounded-tr-none'
-                    : 'bg-[#0b0c0e] border border-white/[0.06] text-zinc-200 rounded-tl-none font-mono'
+                    ? 'bg-[#1a1c24] border border-white/[0.1] text-zinc-100 rounded-tr-none'
+                    : 'bg-[#121419] border border-white/[0.06] text-zinc-200 rounded-tl-none font-sans'
                 }`}
               >
-                <div className="whitespace-pre-wrap">{msg.content}</div>
+                <div>{renderMarkdownContent(msg.content)}</div>
 
                 {/* Copy Button */}
                 {!isUser && (
                   <button
                     onClick={() => copyMessage(msg.content, index)}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition rounded p-1 bg-zinc-800/80 text-zinc-400 hover:text-white"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition rounded p-1 bg-zinc-800/90 text-zinc-400 hover:text-white"
                     title="Copy advice / email draft to clipboard"
                   >
                     {copiedIndex === index ? (
@@ -224,8 +310,8 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
               </div>
 
               {isUser && (
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/[0.1] bg-[#1a1c23] text-zinc-400 mt-1">
-                  <User className="h-3.5 w-3.5" />
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-white/[0.1] bg-[#1a1c23] text-zinc-400 mt-1">
+                  <User className="h-3 w-3" />
                 </div>
               )}
             </div>
@@ -235,26 +321,13 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
         {/* AI Generating Indicator */}
         {isSending && (
           <div className="flex items-start space-x-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
-              <Bot className="h-3.5 w-3.5" />
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 mt-1">
+              <Bot className="h-3 w-3" />
             </div>
-            <div className="rounded-xl rounded-tl-none bg-[#0b0c0e] border border-white/[0.06] px-4 py-2.5 text-xs text-zinc-400 flex items-center space-x-2 font-mono">
-              <Sparkles className="h-3.5 w-3.5 text-amber-400 animate-spin" />
-              <span>Synthesizing Indian statutory precedents & drafting strategy...</span>
+            <div className="rounded-xl rounded-tl-none bg-[#121419] border border-white/[0.06] px-3.5 py-2 text-xs text-zinc-400 flex items-center space-x-2 font-mono">
+              <Sparkles className="h-3 w-3 text-amber-400 animate-spin" />
+              <span>Analyzing Indian legal precedents & drafting response...</span>
             </div>
-          </div>
-        )}
-
-        {/* Live Audio Transcription Streamer Banner */}
-        {isRecording && (
-          <div className="rounded-lg border border-rose-500/30 bg-rose-500/[0.06] p-2.5 flex items-center space-x-2.5 text-xs text-rose-300 font-mono">
-            <div className="flex items-end space-x-1 h-3.5">
-              <span className="w-1 bg-rose-500 rounded-full animate-eq-1" />
-              <span className="w-1 bg-rose-500 rounded-full animate-eq-2" />
-              <span className="w-1 bg-rose-500 rounded-full animate-eq-3" />
-            </div>
-            <span className="font-bold uppercase text-[10px]">Streaming:</span>
-            <span className="italic truncate">{partialTranscript || 'Listening to microphone...'}</span>
           </div>
         )}
 
@@ -263,7 +336,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
 
       {/* Suggested Follow-up Chips */}
       {followups.length > 0 && !isSending && (
-        <div className="px-5 py-2.5 bg-[#0e1014] border-t border-white/[0.04] flex items-center space-x-1.5 overflow-x-auto text-[11px] font-mono">
+        <div className="px-3.5 py-2 bg-[#090a0d] border-t border-white/[0.04] flex items-center space-x-1.5 overflow-x-auto text-[11px] font-mono shrink-0">
           <span className="text-zinc-500 uppercase tracking-widest text-[9px] font-bold shrink-0">
             Suggested:
           </span>
@@ -271,7 +344,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
             <button
               key={idx}
               onClick={() => handleSendMessage(item)}
-              className="rounded border border-white/[0.08] bg-[#14161d] px-2.5 py-1 text-zinc-300 hover:border-amber-500/40 hover:text-amber-200 transition shrink-0"
+              className="rounded border border-white/[0.08] bg-[#14161d] px-2.5 py-1 text-zinc-300 hover:border-amber-500/40 hover:text-amber-200 transition shrink-0 whitespace-nowrap"
             >
               {item}
             </button>
@@ -281,7 +354,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
 
       {/* Live Voice Recording Status Banner */}
       {isRecording && (
-        <div className="px-4 py-2 bg-rose-500/[0.08] border-t border-rose-500/20 flex items-center justify-between text-xs text-rose-300 font-mono">
+        <div className="px-4 py-2 bg-rose-500/[0.08] border-t border-rose-500/20 flex items-center justify-between text-xs text-rose-300 font-mono shrink-0">
           <div className="flex items-center space-x-2">
             <div className="flex items-end space-x-1 h-4">
               <span
@@ -297,7 +370,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
                 style={{ height: `${Math.max(5, Math.min(16, 5 + audioLevel * 0.9))}px` }}
               />
             </div>
-            <span className="text-[11px] font-semibold truncate max-w-[280px]">
+            <span className="text-[11px] font-semibold truncate max-w-[240px]">
               {partialTranscript ? `"${partialTranscript}"` : 'Listening... Speak your legal query'}
             </span>
           </div>
@@ -307,13 +380,13 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
         </div>
       )}
 
-      {/* Input Form */}
+      {/* Input Form - shrink-0 to prevent being clipped */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="p-3.5 border-t border-white/[0.06] bg-[#0e1014]"
+        className="p-3 border-t border-white/[0.08] bg-[#0c0d10] shrink-0"
       >
         <div className="flex items-center space-x-2">
           {/* Live Mic Button */}
@@ -342,7 +415,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
                 : 'Ask counsel: "How should I push back on Section 14?"...'
             }
             disabled={isSending}
-            className="flex-1 rounded-lg border border-white/[0.08] bg-[#0b0c0e] px-3.5 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30 font-mono"
+            className="flex-1 rounded-lg border border-white/[0.08] bg-[#08090b] px-3.5 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30 font-sans"
           />
 
           {/* Send Button */}
@@ -353,7 +426,7 @@ export const LegalCopilot: React.FC<LegalCopilotProps> = ({
             title="Send Consultation Message"
           >
             {isSending ? (
-              <Sparkles className="h-3.5 w-3.5 animate-spin" />
+              <span className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
             ) : (
               <Send className="h-3.5 w-3.5" />
             )}

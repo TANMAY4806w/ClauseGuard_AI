@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import get_settings
-from src.core.database import get_db
+from src.core.database import get_db, utcnow
 from src.models.user import User
 
 
@@ -45,14 +45,14 @@ async def get_or_create_user(db: AsyncSession, email: str, is_guest: bool = Fals
         user = User(
             email=email.strip().lower(),
             is_guest=is_guest,
-            created_at=datetime.now(timezone.utc),
-            last_login_at=datetime.now(timezone.utc),
+            created_at=utcnow(),
+            last_login_at=utcnow(),
         )
         db.add(user)
         await db.commit()
         await db.refresh(user)
     else:
-        user.last_login_at = datetime.now(timezone.utc)
+        user.last_login_at = utcnow()
         await db.commit()
         await db.refresh(user)
 

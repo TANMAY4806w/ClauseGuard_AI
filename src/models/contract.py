@@ -1,9 +1,8 @@
 import uuid
-from datetime import datetime, timezone
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, JSON
 from sqlalchemy.orm import relationship
 
-from src.core.database import Base
+from src.core.database import Base, utcnow
 
 
 class Contract(Base):
@@ -23,8 +22,8 @@ class Contract(Base):
     risk_score = Column(Integer, default=0, nullable=False)
     analysis_report = Column(JSON, nullable=True)  # Stores the full multi-agent JSON payload
 
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime, default=utcnow, nullable=False)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     # Relationships
     user = relationship("User", back_populates="contracts")

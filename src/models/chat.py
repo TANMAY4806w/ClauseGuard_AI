@@ -1,9 +1,8 @@
 import uuid
-from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
-from src.core.database import Base
+from src.core.database import Base, utcnow
 
 
 class ChatMessage(Base):
@@ -18,7 +17,7 @@ class ChatMessage(Base):
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=True)
     role = Column(String(16), nullable=False)  # 'user' | 'assistant'
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime, default=utcnow, nullable=False)
 
     # Relationships
     contract = relationship("Contract", back_populates="chat_messages")

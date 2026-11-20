@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -10,6 +11,11 @@ from src.core.logger import get_logger
 logger = get_logger(__name__)
 
 Base = declarative_base()
+
+
+def utcnow() -> datetime:
+    """Returns timezone-naive UTC datetime for cross-DB compatibility (PostgreSQL TIMESTAMP WITHOUT TIME ZONE & SQLite)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 _engine = None
 _session_maker = None

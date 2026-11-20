@@ -115,3 +115,40 @@ class ContractChatResponse(BaseModel):
     referenced_sections: List[str] = Field(default_factory=list, description="Specific contract sections referenced")
     suggested_followups: List[str] = Field(default_factory=list, description="Recommended next legal questions")
 
+
+class EmailLoginRequest(BaseModel):
+    """Request schema for email-based or guest login."""
+    email: str = Field(..., min_length=3, description="Client email address or guest identifier")
+    is_guest: bool = Field(default=False, description="Whether this is an ephemeral guest session")
+
+
+class UserProfile(BaseModel):
+    """User profile data."""
+    id: str
+    email: str
+    is_guest: bool
+
+
+class LoginResponse(BaseModel):
+    """Authentication response returning JWT and user profile."""
+    access_token: str
+    token_type: str = "bearer"
+    user: UserProfile
+
+
+class ContractListItem(BaseModel):
+    """Summarized contract metadata for the multi-contract vault sidebar."""
+    id: str
+    filename: str
+    file_size: int
+    status: str
+    risk_score: int
+    created_at: str
+    client_context: Optional[str] = None
+
+
+class ChatHistoryResponse(BaseModel):
+    """Stored chat messages for a contract."""
+    contract_id: str
+    messages: List[ChatMessage]
+

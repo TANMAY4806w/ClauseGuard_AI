@@ -5,6 +5,7 @@ import os
 
 from src.core.config import get_settings
 from src.core.logger import get_logger, setup_logging
+from src.core.database import init_db
 from src.api.routes import router as api_v1_router
 
 logger = get_logger(__name__)
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle management."""
     settings = get_settings()
     setup_logging(level="DEBUG" if settings.DEBUG else "INFO", json_format=True)
+    await init_db()
     logger.info(
         "ClauseGuard AI API microservice starting up",
         extra={"env": settings.APP_ENV, "qdrant_mode": settings.QDRANT_MODE, "redis_mode": settings.REDIS_MODE}

@@ -47,6 +47,16 @@ class Settings(BaseSettings):
     # Speech-to-Text & Real-Time Streaming
     ASSEMBLYAI_API_KEY: Optional[str] = Field(default=None, description="AssemblyAI API Key for Real-Time WebSocket")
 
+    # Relational Database (Dual-Engine: SQLite async local / PostgreSQL cloud)
+    DATABASE_URL: Optional[str] = Field(
+        default=None,
+        description="Database connection URL (PostgreSQL async or SQLite async)"
+    )
+    SQLITE_DB_PATH: str = Field(
+        default="./data/clauseguard.db",
+        description="Local SQLite database file path"
+    )
+
     # Vector Database (Qdrant)
     QDRANT_MODE: Literal["local", "server", "memory"] = Field(
         default="local",

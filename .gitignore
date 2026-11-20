@@ -53,6 +53,8 @@ coverage.xml
 qdrant_storage/
 data/raw_uploads/
 data/processed/
+*.db
+data/*.db
 *.log
 
 
